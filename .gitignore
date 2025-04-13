@@ -1,0 +1,9 @@
+.venv/
+docs/
+docs/**/
+docs/conf.py
+.idea/
+.dist/
+.pylintrc
+compartida/settings.py
+apunte/
