@@ -43,7 +43,7 @@ class Apunte(models.Model):
         borra el usuario se borran los apuntes.
     """
     titulo = models.CharField(max_length=255)
-    pdfdir = models.FileField(upload_to='apuntes/')
+    pdfdir = models.FileField(upload_to='uploads/')
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     asignatura = models.ForeignKey('apuntes.Asignatura', on_delete=models.SET_NULL, null=True)
     descargas = models.IntegerField(default=0)
