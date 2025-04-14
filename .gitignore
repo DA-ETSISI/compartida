@@ -8,3 +8,5 @@ docs/conf.py
 compartida/settings.py
 apunte/
 db.sqlite3
+.vscode/
+.vscode/**/
