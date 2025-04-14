@@ -3,7 +3,6 @@ Modelos de la db de la app apuntes.
 """
 from django.db import models
 from django.contrib.auth.models import User
-from usrs.models import Profesor
 
 class Asignatura(models.Model):
     """
@@ -46,7 +45,7 @@ class Apunte(models.Model):
     titulo = models.CharField(max_length=255)
     pdfdir = models.FileField(upload_to='apuntes/')
     fecha_creacion = models.DateTimeField(auto_now_add=True)
-    asignatura = models.ForeignKey(Asignatura, on_delete=models.SET_NULL)
+    asignatura = models.ForeignKey('apuntes.Asignatura', on_delete=models.SET_NULL, null=True)
     descargas = models.IntegerField(default=0)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    apoyo_docente = models.ManyToManyField(Profesor, on_delete=models.SET_NULL)
+    apoyo_docente = models.ManyToManyField('usrs.Profesor')

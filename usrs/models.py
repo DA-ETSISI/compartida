@@ -3,7 +3,6 @@ Modelos de la app usrs.
 """
 from django.contrib.auth.models import User
 from django.db import models
-from apuntes.models import Titulacion, Asignatura
 
 class UsrDa(models.Model):
     """
@@ -17,7 +16,7 @@ class UsrDa(models.Model):
     """
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    titulacion = models.ForeignKey(Titulacion, on_delete=models.SET_NULL)
+    titulacion = models.ForeignKey('apuntes.Titulacion', on_delete=models.SET_NULL, null=True)
     recuento_subidas = models.IntegerField(default=0)
     recuento_descargas = models.IntegerField(default=0)
     es_profesor = models.BooleanField(default=False)
@@ -32,4 +31,4 @@ class Profesor(models.Model):
         tabla asignatura, Si se borra la asignatura se pone a null.
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    asignaturas = models.ManyToManyField(Asignatura, on_delete=models.SET_NULL, blank=True)
+    asignaturas = models.ManyToManyField('apuntes.Asignatura')

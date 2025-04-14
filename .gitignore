@@ -7,3 +7,4 @@ docs/conf.py
 .pylintrc
 compartida/settings.py
 apunte/
+db.sqlite3
