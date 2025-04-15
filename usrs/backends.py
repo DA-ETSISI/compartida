@@ -11,9 +11,12 @@ Models:
             on the provided claims.
 """
 from mozilla_django_oidc.auth import OIDCAuthenticationBackend
-from .models import UsrDa
+from django.core.exceptions import PermissionDenied
+from decouple import config
 
+from .models import UsrDa
 class keycloakOIDCAuthenticationBackend(OIDCAuthenticationBackend):
+
     """
     keycloakOIDCAuthenticationBackend is a custom authentication backend that integrates with 
     Keycloak's OpenID Connect (OIDC) protocol. It extends the OIDCAuthenticationBackend to 
@@ -61,12 +64,16 @@ class keycloakOIDCAuthenticationBackend(OIDCAuthenticationBackend):
         given_name = claims.get('given_name')
         family_name = claims.get('family_name')
         name = claims.get('name')
-        UPMClassCode = claims.get('UPMClassCode')
+        UPMClassCode = claims.get('UPMClassCodes')
+
+        if not config('CODIGO_DE_ESCUELA') in UPMClassCode:
+            print("entro aqui")
+            raise PermissionDenied("el usuario es de otra escuela")
 
         if UsrDa.objects.filter(preferred_username=preferred_username).exists():
             return UsrDa.objects.get(preferred_username=preferred_username)
 
-        if  claims.get('UPMClassCode')[-1] in "DMUPRB":
+        if  claims.get('UPMClassCodes')[-1] in "DMUPRB":
             es_profesor = True
         else:
             es_profesor = False
@@ -108,7 +115,7 @@ class keycloakOIDCAuthenticationBackend(OIDCAuthenticationBackend):
         given_name = claims.get('given_name')
         family_name = claims.get('family_name')
         name = claims.get('name')
-        UPMClassCode = claims.get('UPMClassCode')
+        UPMClassCode = claims.get('UPMClassCodes')
 
         # Update the user instance
         user.preferred_username = preferred_username

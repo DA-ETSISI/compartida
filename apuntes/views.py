@@ -1,6 +1,5 @@
 """
-apuntes/views.py
-Views for the apuntes app.
+Module for handling views related to the 'apuntes' app.
 """
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -13,7 +12,14 @@ from .models import Apunte
 # Create your views here.
 def index(request):
     """
-    Index view for the apuntes app.
+    Handles the rendering of the index page for the "apuntes" application.
+    This view retrieves the top 3 "Apunte" objects ordered by the number of downloads,
+    as well as the top 3 users with the most uploads and downloads, respectively.
+    It then renders the "apuntes/index.html" template with the provided context.
+    Args:
+        request (HttpRequest): The HTTP request object containing metadata about the request.
+    Returns:
+        HttpResponse: The rendered HTML document for the index page.
     """
 
     doc_template = loader.get_template("apuntes/index.html")
@@ -36,7 +42,18 @@ def index(request):
 @login_required(login_url="/usr/login/")  # Redirect to login page if not authenticated
 def subir_apunte(request):
     """
-    View for uploading apuntes.
+    Handles the upload of a PDF file and saves it as an "Apunte" object.
+
+    This view renders a template for uploading a file and processes the form 
+    submission when the request method is POST. It saves the uploaded file 
+    along with additional metadata (title, description, and user) to the database.
+
+    Args:
+        request (HttpRequest): The HTTP request object containing metadata 
+        about the request and user.
+
+    Returns:
+        HttpResponse: The rendered HTML document for the upload page.
     """
 
     doc_template = loader.get_template("apuntes/subir.html")

@@ -150,7 +150,7 @@ class UsrDa(AbstractBaseUser, PermissionsMixin):
             
             REQUIRED_FIELDS: 
                 A list of fields that are required when creating a user,
-                including `preferred_username`, `email`, `UPMClassCode`, `name`, 
+                including `email`, `UPMClassCode`, `name`, 
                 `given_name`, and `family_name`.
 
         Manager:
@@ -174,8 +174,8 @@ class UsrDa(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(max_length=255, blank=True, null=True)
 
     USERNAME_FIELD = 'preferred_username'
-    REQUIRED_FIELDS = ['preferred_username',
-                       'email',
+    REQUIRED_FIELDS = [
+                        'email',
                         'UPMClassCode',
                         'name',
                         'given_name',

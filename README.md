@@ -28,6 +28,7 @@ KC_CLIENT_SECRET={Secreto del cliente del keycloak}
 KC_REALM={Realm usado por el keycloak}
 KC_HOST={Host del keycloak}
 KC_ALGO={algoritmo usado por keycloak}
+CODIGO_DE_ESCUELA={Codigo de tu escula, 61 en caso de la ETISISI}
 ```
 
 Make the migrations of the db.
