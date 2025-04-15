@@ -3,14 +3,14 @@ This module defines the models for a Django application that manages academic su
 degrees, users, and professors. It includes the following models:
 
 Models:
-    - Asignatura: Represents an academic subject with attributes for name, credits, and semester.
-    - Tema: Represents a topic associated with a specific subject.
-    - Titulacion: Represents an academic degree or program with associated subjects and credits.
-    - UsrDa: Represents a user in the system with extended attributes and permissions.
-    - Profesor: Represents a professor with assigned subjects.
+    Asignatura: Represents an academic subject with attributes for name, credits, and semester.
+    Tema: Represents a topic associated with a specific subject.
+    Titulacion: Represents an academic degree or program with associated subjects and credits.
+    UsrDa: Represents a user in the system with extended attributes and permissions.
+    Profesor: Represents a professor with assigned subjects.
 
 Models Managers:
-    - UsrDaManager: Custom manager for creating users and superusers with additional logic.
+    UsrDaManager: Custom manager for creating users and superusers with additional logic.
 
 Each model includes detailed attributes and relationships to represent the academic structure 
 and user roles within the system.
@@ -51,7 +51,7 @@ class Titulacion(models.Model):
     Represents an academic degree or program.
 
     Attributes:
-        nombre (CharFiled): The name of the degree or program, with a maximum length of 255 characters.
+        nombre (CharFiled): The name of the degree.
         asignaturas (ManyToManyField): A many-to-many relationship with the Asignatura model, 
             representing the subjects associated with the degree. This field is optional.
         creditos (IntegerField): The total number of credits required for the degree.
@@ -79,11 +79,11 @@ class UsrDaManager(BaseUserManager):
         Returns:
             user: The created user instance.
 
-        Side Effects:
-            - If `es_profesor` is True, a `Profesor` instance is created and associated 
+        Notes:
+            If `es_profesor` is True, a `Profesor` instance is created and associated 
                 with the user.
-            - The user's password is set to an unusable state.
-            - The user instance is saved to the database.
+            The user's password is set to an unusable state.
+            The user instance is saved to the database.
         """
 
         email = self.normalize_email(email)
@@ -142,12 +142,19 @@ class UsrDa(AbstractBaseUser, PermissionsMixin):
         es_profesor (bool): A flag indicating whether the user is a professor. Defaults to False.
         password (CharField): The password for the user. Can be blank or null.
 
-    Meta:
-        USERNAME_FIELD: Specifies the field used as the unique identifier for authentication, 
-            set to `preferred_username`.
+    Notes:
+        Meta:
+            USERNAME_FIELD: 
+                Specifies the field used as the unique identifier for authentication, 
+                set to `preferred_username`.
+            
+            REQUIRED_FIELDS: 
+                A list of fields that are required when creating a user,
+                including `preferred_username`, `email`, `UPMClassCode`, `name`, 
+                `given_name`, and `family_name`.
 
-    Manager:
-        objects: Custom manager for the `UsrDa` model, provided by `UsrDaManager`.
+        Manager:
+            objects: Custom manager for the `UsrDa` model, provided by `UsrDaManager`.
     """
 
     preferred_username = models.CharField(max_length=255, unique=True, default="")
@@ -159,7 +166,7 @@ class UsrDa(AbstractBaseUser, PermissionsMixin):
     # Código upm dado por keycloak (siu)
     UPMClassCode = models.CharField(max_length=255, default="")
 
-    titulacion = models.ForeignKey(Titulacion, on_delete=models.SET_NULL, null=True)
+    titulacion = models.ForeignKey(Titulacion, on_delete=models.SET_NULL, blank= True, null=True)
     recuento_subidas = models.IntegerField(default=0)
     recuento_descargas = models.IntegerField(default=0)
     es_profesor = models.BooleanField(default=False)
@@ -167,6 +174,13 @@ class UsrDa(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(max_length=255, blank=True, null=True)
 
     USERNAME_FIELD = 'preferred_username'
+    REQUIRED_FIELDS = ['preferred_username',
+                       'email',
+                        'UPMClassCode',
+                        'name',
+                        'given_name',
+                        'family_name',
+                        ]
 
     objects = UsrDaManager()
 
