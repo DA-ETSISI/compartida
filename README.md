@@ -8,7 +8,7 @@ Por [@Pdrj09](https://github.com/Pdrj09) con ❤️ para [@DA-ETSISI](https://gi
 Usa el gestor de paquetes de python [pip](https://pip.pypa.io/en/stable/) para descargar los paquetes de django y mozilla django oidc.
 
 ```bash
-pip install django, mozilla_django_oidc
+pip install django, mozilla_django_oidc, decouple
 ```
 
 Clona el repositorio.
@@ -17,7 +17,18 @@ git clone https://github.com/Pdrj09/compartida.git
 cd compartida/
 ```
 
-Es importante generar el `setings.py` del proyecto y configurar [mozilla django oidc](https://mozilla-django-oidc.readthedocs.io/en/stable/index.html)
+Es importante generar un archivo .env en la raíz del del proyecto:
+
+```.env
+DJANGO_SECRECT_KEY={Clave secreta de la app}
+DEBUG={True/False no usar nunca True en producción}
+ALLOWED_HOST={Host permitidas para el acceso a la web, localhost,127.0.0.1 si es en local}
+KC_CLIENT_ID={ID del cliente del keycloak}
+KC_CLIENT_SECRET={Secreto del cliente del keycloak}
+KC_REALM={Realm usado por el keycloak}
+KC_HOST={Host del keycloak}
+KC_ALGO={algoritmo usado por keycloak}
+```
 
 Make the migrations of the db.
 ```bash
