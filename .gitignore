@@ -5,8 +5,9 @@ docs/conf.py
 .idea/
 .dist/
 .pylintrc
-compartida/settings.py
+.env
 apunte/
 db.sqlite3
 .vscode/
 .vscode/**/
+uploads/

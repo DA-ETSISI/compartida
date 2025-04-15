@@ -2,29 +2,7 @@
 Modelos de la db de la app apuntes.
 """
 from django.db import models
-from django.contrib.auth.models import User
-
-class Asignatura(models.Model):
-    """
-    Modelo para almacenar asignaturas.
-
-    atributos:
-    - nombre: Nombre de la asignatura.
-    - creditos: Número de créditos de la asignatura.
-
-    """
-    nombre = models.CharField(max_length=255)
-    creditos = models.IntegerField()
-
-class Titulacion(models.Model):
-    """
-    Modelo para almacenar titulación.
-
-    atributos:
-    - nombre: Nombre de la carrera.
-
-    """
-    nombre = models.CharField(max_length=255)
+from usrs.models import Asignatura, UsrDa, Profesor
 
 class Apunte(models.Model):
     """
@@ -45,7 +23,8 @@ class Apunte(models.Model):
     titulo = models.CharField(max_length=255)
     pdfdir = models.FileField(upload_to='uploads/')
     fecha_creacion = models.DateTimeField(auto_now_add=True)
-    asignatura = models.ForeignKey('apuntes.Asignatura', on_delete=models.SET_NULL, null=True)
+    asignatura = models.ForeignKey(Asignatura, on_delete=models.SET_NULL, null=True)
     descargas = models.IntegerField(default=0)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    apoyo_docente = models.ManyToManyField('usrs.Profesor')
+    user = models.ForeignKey(UsrDa, on_delete=models.CASCADE)
+    apoyo_docente = models.ManyToManyField(Profesor)
+    descipcion = models.TextField(default="")
