@@ -30,7 +30,7 @@ class Apunte(models.Model):
             uploaded the note.
         apoyo_docente (ManyToManyField): A many-to-many relationship with the Profesor model,
             representing the professors who support or are associated with the note.
-        descipcion (CharField): A textual description of the note. Defaults to an empty string.
+        descripcion (CharField): A textual description of the note. Defaults to an empty string.
     """
 
     titulo = models.CharField(max_length=255)
@@ -40,7 +40,7 @@ class Apunte(models.Model):
     descargas = models.IntegerField(default=0)
     user = models.ForeignKey(UsrDa, on_delete=models.CASCADE)
     apoyo_docente = models.ManyToManyField(Profesor)
-    descipcion = models.TextField(default="")
+    descripcion = models.TextField(default="")
 
 class Ejercicios(models.Model):
     """

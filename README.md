@@ -33,6 +33,7 @@ CODIGO_DE_ESCUELA={Código de tu escuela, 61 en caso de la ETSISI}
 
 Aplica las migraciones de la base de datos.
 ```bash
+python3 manage.py makemigrations
 python3 manage.py migrate
 ```
 
