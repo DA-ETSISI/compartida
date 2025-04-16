@@ -1,8 +1,8 @@
 """
 Module for handling views related to the 'apuntes' app.
 """
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseServerError, Http404
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.template import loader
 
 from usrs.models import UsrDa
@@ -111,3 +111,58 @@ def lista_apuntes(request) -> HttpResponse:
     doc = doc_template.render(ctx, request)
 
     return HttpResponse(doc)
+
+@user_passes_test(lambda u: u.is_staff)
+def eliminar_apunte(request, apunte_id) -> HttpResponseRedirect:
+    """
+    Handles the deletion of an "Apunte" object.
+
+    This view retrieves the specified "Apunte" object by its ID and deletes it
+    from the database. It then redirects the user to the list of apuntes.
+
+    Args:
+        request (HttpRequest): The HTTP request object containing metadata 
+            about the request.
+        apunte_id (int): The ID of the "Apunte" object to be deleted.
+
+    Returns:
+        HttpResponse: A redirect response to the list of apuntes.
+    """
+
+    try:
+        apunte = Apunte.objects.get(id=apunte_id)
+        apunte.delete()
+    except Apunte.DoesNotExist:
+        return Http404("Apunte not found.")
+
+    request.user.recuento_subidas -= 1
+    request.user.save()
+
+    return HttpResponseRedirect("/apuntes/")
+
+@user_passes_test(lambda u: u.es_profesor)
+def apoyo_docente(request, apunte_id):
+    """
+    Assigns the current user (professor) as a supporting staff member for a 
+    specific "apunte" (note).
+    Args:
+        request (HttpRequest): The HTTP request object containing metadata about the request.
+        apunte_id (int): The ID of the "apunte" (note) to which the supporting staff member 
+            will be added.
+    Returns:
+        HttpResponse: A redirect response to the "/apuntes/" page.
+    Raises:
+        UsrDa.DoesNotExist: If the user associated with the request does not exist.
+        Apunte.DoesNotExist: If the "apunte" with the given ID does not exist.
+    """
+    try:
+        pdi = UsrDa.objects.get(id=request.user.id)
+        apunte = Apunte.objects.get(id=apunte_id)
+    except UsrDa.DoesNotExist:
+        return HttpResponseServerError("User not found.")
+    except Apunte.DoesNotExist:
+        return HttpResponseServerError("Apunte not found.")
+
+    apunte.apoyo_docente.add(pdi)
+
+    return HttpResponseRedirect("/apuntes/")
