@@ -22,7 +22,7 @@ Es importante generar un archivo .env en la raíz del proyecto:
 ```.env
 DJANGO_SECRET_KEY={Clave secreta de la app}
 DEBUG={True/False no usar nunca True en producción}
-ALLOWED_HOST={Hosts permitidos para el acceso a la web; localhost,127.0.0.1 si es en local}
+ALLOWED_HOSTS={Hosts permitidos para el acceso a la web; localhost,127.0.0.1 si es en local}
 KC_CLIENT_ID={ID del cliente de Keycloak}
 KC_CLIENT_SECRET={Secreto del cliente de Keycloak}
 KC_REALM={Realm usado por Keycloak}
