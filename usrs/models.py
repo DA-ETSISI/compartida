@@ -140,6 +140,8 @@ class UsrDa(AbstractBaseUser, PermissionsMixin):
         recuento_subidas (int): The count of uploads made by the user. Defaults to 0.
         recuento_descargas (int): The count of downloads made by the user. Defaults to 0.
         es_profesor (bool): A flag indicating whether the user is a professor. Defaults to False.
+        is_staff (bool): A flag indicating whether the user has staff privileges. Defaults to False.
+        is_active (bool): A flag indicating whether the user account is active. Defaults to True.
         password (CharField): The password for the user. Can be blank or null.
 
     Notes:
@@ -170,6 +172,9 @@ class UsrDa(AbstractBaseUser, PermissionsMixin):
     recuento_subidas = models.IntegerField(default=0)
     recuento_descargas = models.IntegerField(default=0)
     es_profesor = models.BooleanField(default=False)
+
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
     password = models.CharField(max_length=255, blank=True, null=True)
 

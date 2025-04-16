@@ -20,4 +20,6 @@ from . import views
 urlpatterns = [
     path("", views.index),
     path("upload/", views.subir_apunte),
+    path("apuntes/", views.lista_apuntes),
+    #path("apuntes/<str:nombre_apuntes>/", views.apunte_detalle),
 ]

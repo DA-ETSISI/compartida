@@ -10,7 +10,7 @@ from .models import Apunte
 
 
 # Create your views here.
-def index(request):
+def index(request) -> HttpResponse:
     """
     Handles the rendering of the index page for the "apuntes" application.
     This view retrieves the top 3 "Apunte" objects ordered by the number of downloads,
@@ -39,8 +39,8 @@ def index(request):
 
     return HttpResponse(doc)
 
-@login_required(login_url="/usr/login/")  # Redirect to login page if not authenticated
-def subir_apunte(request):
+@login_required(login_url="/usr/login/")
+def subir_apunte(request) -> HttpResponse:
     """
     Handles the upload of a PDF file and saves it as an "Apunte" object.
 
@@ -50,7 +50,7 @@ def subir_apunte(request):
 
     Args:
         request (HttpRequest): The HTTP request object containing metadata 
-        about the request and user.
+            about the request and user.
 
     Returns:
         HttpResponse: The rendered HTML document for the upload page.
@@ -71,6 +71,41 @@ def subir_apunte(request):
 
     ctx = {
         "user": request.user.is_authenticated,
+    }
+
+    doc = doc_template.render(ctx, request)
+
+    return HttpResponse(doc)
+
+@login_required(login_url="/usr/login/")
+def lista_apuntes(request) -> HttpResponse:
+    """
+    Renders a list of uploaded "Apunte" objects.
+
+    This view retrieves all "Apunte" objects from the database and renders them
+    in a template. It also includes a context variable to indicate whether the
+    user is authenticated.
+
+    Args:
+        request (HttpRequest): The HTTP request object containing metadata 
+            about the request.
+
+    Returns:
+        HttpResponse: The rendered HTML document for the list of apuntes.
+    """
+
+    doc_template = loader.get_template("apuntes/lista.html")
+
+    apuntes = Apunte.objects.all().order_by("visualizaciones", "-fecha_creacion")
+
+    es_staff = request.user.is_staff
+    es_profesor = request.user.es_profesor
+
+    ctx = {
+        "user": request.user.is_authenticated,
+        "apuntes": apuntes,
+        "es_staff": es_staff,
+        "es_profesor": es_profesor,
     }
 
     doc = doc_template.render(ctx, request)

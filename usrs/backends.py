@@ -6,9 +6,12 @@ functionality for creating and updating user instances
 
 Models:
     KeycloakOIDCAuthenticationBackend:
-        create_user(claims): Creates a new user based on the claims received from Keycloak.
-        update_user(user, claims): Updates the attributes of an existing user instance based 
-            on the provided claims.
+        A custom authentication backend that integrates with Keycloak's OIDC protocol.
+
+        - reate_user(claims): 
+            Creates a new user based on the claims received from Keycloak.
+        - update_user(user, claims): 
+            Updates the attributes of an existing user instance based on the provided claims.
 """
 from mozilla_django_oidc.auth import OIDCAuthenticationBackend
 from django.core.exceptions import PermissionDenied

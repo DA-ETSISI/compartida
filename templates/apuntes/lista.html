@@ -1,0 +1,46 @@
+{% include "menu/superior.html" %}
+
+  <section class="hero">
+    <h2>Comparte y descubre los mejores apuntes</h2>
+    <p>Explora, colabora y comparte tus conocimientos con la comunidad.</p>
+  </section>
+
+  <section class="section">
+    <h2>Apuntes disponibles</h2>
+    <div class="cards">
+      {% for apunte in apuntes %}
+        <div class="card">
+          <!-- Contenido de la tarjeta sin votones -->
+          <div class="card-content" style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+            <h3>
+              <a href="viisualizador/{{apunte.id}}">
+                {{ apunte.titulo }}
+              </a>
+            </h3>
+            <p>{{ apunte.descripcion }}</p>
+            </div>
+            <div class="actions">
+              {% if es_staff %}
+                <form action="delete/{{apunte.id}}" method="post">
+                  {% csrf_token %}
+                  <button type="submit" id="delete-{{ apunte.id }}" class="boton-principal accion-btn">Borrar</button>
+                </form>
+              {% endif %}
+              {% if es_profesor %}
+                <form action="apoyo_docente/{{apunte.id}}" method="post">
+                  {% csrf_token %}
+                  <button type="submit" id="apoyo-{{ apunte.id }}" class="boton-principal accion-btn apoyo">Apoyo Docente</button>
+                </form>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p>No hay apuntes disponibles.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+
+{% include "menu/inferior.html" %}

@@ -2,12 +2,12 @@
 This module defines two Django models: Apunte and ejercicios.
 
 Models:
-    - Apunte: Represents a study note or document uploaded by a user. It includes attributes 
-      such as title, file path, creation date, associated subject, download count, uploader, 
-      associated professors, and a description.
+    Apunte: Represents a study note or document uploaded by a user. It includes attributes 
+        such as title, file path, creation date, associated subject, download count, uploader, 
+        associated professors, and a description.
 
-    - ejercicios: Represents an exercise with attributes such as statement, optional PDF file, 
-      creation date, associated subject, associated topic, view count, and uploader.
+    ejercicios: Represents an exercise with attributes such as statement, optional PDF file, 
+        creation date, associated subject, associated topic, view count, and uploader.
 """
 from django.db import models
 from usrs.models import Asignatura, UsrDa, Profesor, Tema
@@ -31,6 +31,8 @@ class Apunte(models.Model):
         apoyo_docente (ManyToManyField): A many-to-many relationship with the Profesor model,
             representing the professors who support or are associated with the note.
         descripcion (CharField): A textual description of the note. Defaults to an empty string.
+        visualizaciones (IntegerField): The number of times the note has been viewed. Each user 
+            counts only once towards the view count. Defaults to 0.
     """
 
     titulo = models.CharField(max_length=255)
@@ -41,6 +43,7 @@ class Apunte(models.Model):
     user = models.ForeignKey(UsrDa, on_delete=models.CASCADE)
     apoyo_docente = models.ManyToManyField(Profesor)
     descripcion = models.TextField(default="")
+    visualizaciones = models.IntegerField(default=0)
 
 class Ejercicios(models.Model):
     """
