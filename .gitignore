@@ -11,3 +11,5 @@ db.sqlite3
 .vscode/
 .vscode/**/
 uploads/
+media/**/
+media/
