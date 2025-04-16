@@ -1,8 +1,9 @@
 """
 Module for handling views related to the 'apuntes' app.
 """
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseServerError, Http404
+from django.http import HttpResponse, HttpResponseServerError, Http404
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.shortcuts import redirect
 from django.template import loader
 
 from usrs.models import UsrDa
@@ -113,7 +114,7 @@ def lista_apuntes(request) -> HttpResponse:
     return HttpResponse(doc)
 
 @user_passes_test(lambda u: u.is_staff)
-def eliminar_apunte(request, apunte_id) -> HttpResponseRedirect:
+def eliminar_apunte(request, apunte_id):
     """
     Handles the deletion of an "Apunte" object.
 
@@ -129,16 +130,17 @@ def eliminar_apunte(request, apunte_id) -> HttpResponseRedirect:
         HttpResponse: A redirect response to the list of apuntes.
     """
 
-    try:
-        apunte = Apunte.objects.get(id=apunte_id)
-        apunte.delete()
-    except Apunte.DoesNotExist:
-        return Http404("Apunte not found.")
+    if request.method == "POST":
+        try:
+            apunte = Apunte.objects.get(id=apunte_id)
+            apunte.delete()
+        except Apunte.DoesNotExist:
+            return Http404("Apunte not found.")
 
-    request.user.recuento_subidas -= 1
-    request.user.save()
+        request.user.recuento_subidas -= 1
+        request.user.save()
 
-    return HttpResponseRedirect("/apuntes/")
+        return redirect(to="/apuntes/")
 
 @user_passes_test(lambda u: u.es_profesor)
 def apoyo_docente(request, apunte_id):
@@ -155,14 +157,16 @@ def apoyo_docente(request, apunte_id):
         UsrDa.DoesNotExist: If the user associated with the request does not exist.
         Apunte.DoesNotExist: If the "apunte" with the given ID does not exist.
     """
-    try:
-        pdi = UsrDa.objects.get(id=request.user.id)
-        apunte = Apunte.objects.get(id=apunte_id)
-    except UsrDa.DoesNotExist:
-        return HttpResponseServerError("User not found.")
-    except Apunte.DoesNotExist:
-        return HttpResponseServerError("Apunte not found.")
 
-    apunte.apoyo_docente.add(pdi)
+    if request.method == "POST":
+        try:
+            pdi = UsrDa.objects.get(id=request.user.id)
+            apunte = Apunte.objects.get(id=apunte_id)
+        except UsrDa.DoesNotExist:
+            return HttpResponseServerError("User not found.")
+        except Apunte.DoesNotExist:
+            return HttpResponseServerError("Apunte not found.")
 
-    return HttpResponseRedirect("/apuntes/")
+        apunte.apoyo_docente.add(pdi)
+
+        return redirect(to="/apuntes/")

@@ -14,7 +14,7 @@
           <div class="card-content" style="display: flex; align-items: center; justify-content: space-between;">
             <div>
             <h3>
-              <a href="visualizador/{{apunte.id}}">
+              <a href="visualizador/{{apunte.id}}/">
                 {{ apunte.titulo }}
               </a>
             </h3>
@@ -22,13 +22,13 @@
             </div>
             <div class="actions">
               {% if es_staff %}
-                <form action="delete/{{apunte.id}}" method="post">
+                <form action="delete/{{apunte.id}}/" method="post">
                   {% csrf_token %}
                   <button type="submit" id="delete-{{ apunte.id }}" class="boton-principal accion-btn">Borrar</button>
                 </form>
               {% endif %}
               {% if es_profesor %}
-                <form action="apoyo_docente/{{apunte.id}}" method="post">
+                <form action="apoyo_docente/{{apunte.id}}/" method="post">
                   {% csrf_token %}
                   <button type="submit" id="apoyo-{{ apunte.id }}" class="boton-principal accion-btn apoyo">Apoyo Docente</button>
                 </form>
