@@ -36,7 +36,7 @@ class Apunte(models.Model):
     """
 
     titulo = models.CharField(max_length=255)
-    pdfdir = models.FileField(upload_to='uploads/apuntes')
+    pdfdir = models.FileField(upload_to='static/uploads/apuntes')
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     asignatura = models.ForeignKey(Asignatura, on_delete=models.SET_NULL, null=True)
     descargas = models.IntegerField(default=0)
