@@ -163,3 +163,16 @@ footer {
   .boton-principal:hover {
     background-color: #004699;
   }
+
+  .enlace-blanco {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.enlace-blanco:hover {
+    color: #e0e0e0; /* tono gris claro al pasar el ratón */
+    text-decoration: underline;
+}
+
