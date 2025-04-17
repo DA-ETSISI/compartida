@@ -26,5 +26,7 @@ urlpatterns = [
     path("apuntes/apoyo_docente/<int:apunte_id>/", views.apoyo_docente),
     path("staff/asignaturas/crear/", views.crear_asignatura),
     path("staff/asignaturas/lista/", views.lista_asignaturas),
+    path("staff/asignaturas/delete/<int:asignatura_id>/", views.delete_asignatura),
+    path("staff/asignaturas/edit/<int:asignatura_id>/", views.editar_asignatura),
 
 ]

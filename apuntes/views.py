@@ -269,3 +269,70 @@ def lista_asignaturas(request):
     doc = doc_template.render(ctx, request)
 
     return HttpResponse(doc)
+
+@user_passes_test(lambda u: u.is_staff)
+def delete_asignatura(request, asignatura_id):
+    """
+    Handles the deletion of an "Asignatura" object.
+
+    This view retrieves the specified "Asignatura" object by its ID and deletes
+    it from the database. It then redirects the user to the list of asignaturas.
+
+    Args:
+        request (HttpRequest): The HTTP request object containing metadata 
+            about the request.
+        asignatura_id (int): The ID of the "Asignatura" object to be deleted.
+
+    Returns:
+        HttpResponse: A redirect response to the list of asignaturas.
+    """
+
+    if request.method == "POST":
+        try:
+            asignatura = Asignatura.objects.get(id=asignatura_id)
+            asignatura.delete()
+        except Asignatura.DoesNotExist as error:
+            raise Http404("Asignatura not found.") from error
+
+        return redirect(to="/staff/asignaturas/lista/")
+
+@user_passes_test(lambda u: u.is_staff)
+def editar_asignatura(request, asignatura_id):
+    """
+    Handles the editing of an existing "Asignatura" object.
+    This view retrieves the specified "Asignatura" object by its ID and updates
+    its attributes based on the submitted form data. It then redirects the user
+    to the list of asignaturas.
+    Args:
+        request (HttpRequest): The HTTP request object containing metadata 
+            about the request.
+        asignatura_id (int): The ID of the "Asignatura" object to be edited.
+    Returns:
+        HttpResponse: A redirect response to the list of asignaturas.
+    Raises:
+        Http404: If the "Asignatura" with the given ID does not exist.
+    """
+
+    doc_template = loader.get_template("staff/editar_asignatura.html")
+
+    try:
+        asignatura = Asignatura.objects.get(id=asignatura_id)
+    except Asignatura.DoesNotExist:
+        return Http404("Asignatura not found.")
+
+    if request.method == "POST":
+
+        asignatura.nombre = request.POST["nombre"]
+        asignatura.creditos = request.POST["creditos"]
+        asignatura.semestre = request.POST["semestre"]
+
+        asignatura.save()
+
+        return redirect(to="/staff/asignaturas/lista/")
+
+    ctx = {
+        "user": request.user.is_authenticated,
+        "asignatura": asignatura,
+    }
+    doc = doc_template.render(ctx, request)
+    return HttpResponse(doc)
