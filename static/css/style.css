@@ -108,12 +108,10 @@ footer {
 }
 
 .upload-form-container {
-    background-color: #fff;
     padding: 2rem;
     border-radius: 12px;
     max-width: 600px;
     margin: 0 auto;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
   }
   
   .titulo-seccion {
@@ -135,6 +133,7 @@ footer {
   
   .formulario-apunte input[type="text"],
   .formulario-apunte input[type="file"],
+  .formulario-apunte input[type="number"],
   .formulario-apunte textarea {
     width: 100%;
     padding: 0.75rem;

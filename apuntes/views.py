@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import redirect
 from django.template import loader
 
-from usrs.models import UsrDa
+from usrs.models import UsrDa, Asignatura
 from .models import Apunte
 
 
@@ -25,7 +25,7 @@ def index(request) -> HttpResponse:
 
     doc_template = loader.get_template("apuntes/index.html")
 
-    apuntes = Apunte.objects.order_by("descargas")[:3]
+    apuntes = Apunte.objects.order_by("visualizaciones")[:3]
     top_subidas = UsrDa.objects.order_by("recuento_subidas")[:3]
     top_descargas = UsrDa.objects.order_by("recuento_descargas")[:3]
 
@@ -197,3 +197,75 @@ def visualizador_apuntes(request, apunte_id):
         return Http404("Apunte not found.")
 
     return redirect(to=f"/{apunte.pdfdir}")
+
+@user_passes_test(lambda u: u.is_staff)
+def crear_asignatura(request):
+    """
+    Handles the creation of a new "Asignatura" object.
+
+    This view renders a template for creating a new "Asignatura" and processes
+    the form submission when the request method is POST. It saves the new
+    "Asignatura" to the database.
+
+    Args:
+        request (HttpRequest): The HTTP request object containing metadata 
+            about the request.
+
+    Returns:
+        HttpResponse: The rendered HTML document for the create asignatura page.
+    """
+
+    doc_template = loader.get_template("staff/crear_asignatura.html")
+
+    if request.method == "POST":
+
+        nombre = request.POST["nombre"]
+        creditos = request.POST["creditos"]
+        semestre = request.POST["semestre"]
+
+        asignatura = Asignatura(
+            nombre=nombre,
+            creditos=creditos,
+            semestre=semestre,
+        )
+
+        asignatura.save()
+
+
+    ctx = {
+        "user": request.user.is_authenticated,
+    }
+
+    doc = doc_template.render(ctx, request)
+
+    return HttpResponse(doc)
+
+@user_passes_test(lambda u: u.is_staff)
+def lista_asignaturas(request):
+    """
+    Renders a list of all "Asignatura" objects.
+
+    This view retrieves all "Asignatura" objects from the database and renders
+    them in a template. It also includes a context variable to indicate whether
+    the user is authenticated.
+
+    Args:
+        request (HttpRequest): The HTTP request object containing metadata 
+            about the request.
+
+    Returns:
+        HttpResponse: The rendered HTML document for the list of asignaturas.
+    """
+
+    doc_template = loader.get_template("staff/lista_asignaturas.html")
+
+    asignaturas = Asignatura.objects.all()
+
+    ctx = {
+        "user": request.user.is_authenticated,
+        "asignaturas": asignaturas,
+    }
+
+    doc = doc_template.render(ctx, request)
+
+    return HttpResponse(doc)

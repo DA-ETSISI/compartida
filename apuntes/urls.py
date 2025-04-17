@@ -24,4 +24,7 @@ urlpatterns = [
     path("apuntes/visualizador/<int:apunte_id>/", views.visualizador_apuntes),
     path("apuntes/delete/<int:apunte_id>/", views.eliminar_apunte),
     path("apuntes/apoyo_docente/<int:apunte_id>/", views.apoyo_docente),
+    path("staff/asignaturas/crear/", views.crear_asignatura),
+    path("staff/asignaturas/lista/", views.lista_asignaturas),
+
 ]
