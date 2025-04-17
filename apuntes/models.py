@@ -25,25 +25,24 @@ class Apunte(models.Model):
             Automatically set on creation.
         asignatura (ForeignKey): A foreign key to the Asignatura model, representing the 
             subject associated with the note. Can be null if not assigned to a subject.
-        descargas (IntegerField): The number of times the note has been downloaded. Defaults to 0.
         user (ForeignKey): A foreign key to the UsrDa model, representing the user who 
             uploaded the note.
         apoyo_docente (ManyToManyField): A many-to-many relationship with the Profesor model,
             representing the professors who support or are associated with the note.
         descripcion (CharField): A textual description of the note. Defaults to an empty string.
-        visualizaciones (IntegerField): The number of times the note has been viewed. Each user 
-            counts only once towards the view count. Defaults to 0.
+        visualizaciones (IntegerField): The number of times the note has been viewed. Defaults to 0.
+        tema (ForeignKey): A foreign key to the Tema model, representing the topic associated.
     """
 
     titulo = models.CharField(max_length=255)
     pdfdir = models.FileField(upload_to='media/uploads/apuntes')
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     asignatura = models.ForeignKey(Asignatura, on_delete=models.SET_NULL, null=True)
-    descargas = models.IntegerField(default=0)
     user = models.ForeignKey(UsrDa, on_delete=models.CASCADE)
     apoyo_docente = models.ManyToManyField(Profesor)
     descripcion = models.TextField(default="")
     visualizaciones = models.IntegerField(default=0)
+    tema = models.ForeignKey(Tema, on_delete=models.SET_NULL, null=True)
 
 class Ejercicios(models.Model):
     """
@@ -66,7 +65,7 @@ class Ejercicios(models.Model):
     """
 
     enunciado = models.TextField()
-    pdfdir = models.FileField(upload_to='uploads/ejercicios', blank=True)
+    pdfdir = models.FileField(upload_to='media/uploads/ejercicios', blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     asignatura = models.ForeignKey(Asignatura, on_delete=models.SET_NULL, null=True)
     tema =  models.ForeignKey(Tema, on_delete=models.SET_NULL, null=True)

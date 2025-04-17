@@ -21,7 +21,7 @@ urlpatterns = [
     path("", views.index),
     path("upload/", views.subir_apunte),
     path("apuntes/", views.lista_apuntes),
-    #path("apuntes/visualizador/<int:apunte_id>/", views.visualizador_apunte),
+    path("apuntes/visualizador/<int:apunte_id>/", views.visualizador_apuntes),
     path("apuntes/delete/<int:apunte_id>/", views.eliminar_apunte),
     path("apuntes/apoyo_docente/<int:apunte_id>/", views.apoyo_docente),
 ]

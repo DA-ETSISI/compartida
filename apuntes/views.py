@@ -170,3 +170,30 @@ def apoyo_docente(request, apunte_id):
         apunte.apoyo_docente.add(pdi)
 
         return redirect(to="/apuntes/")
+
+@login_required(login_url="/usr/login/")
+def visualizador_apuntes(request, apunte_id):
+    """
+    Handles the display of a specific "Apunte" object.
+
+    This view retrieves the specified "Apunte" object by its ID and increments
+    its view count. It then renders a template to display the details of the
+    selected "Apunte".
+
+    Args:
+        request (HttpRequest): The HTTP request object containing metadata 
+            about the request.
+        apunte_id (int): The ID of the "Apunte" object to be displayed.
+
+    Returns:
+        HttpResponse: The rendered HTML document for the selected apunte.
+    """
+
+    try:
+        apunte = Apunte.objects.get(id=apunte_id)
+        apunte.visualizaciones += 1
+        apunte.save()
+    except Apunte.DoesNotExist:
+        return Http404("Apunte not found.")
+
+    return redirect(to=f"/{apunte.pdfdir}")
