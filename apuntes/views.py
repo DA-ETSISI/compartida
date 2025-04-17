@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import redirect
 from django.template import loader
 
-from usrs.models import UsrDa, Asignatura
+from usrs.models import UsrDa, Asignatura, Titulacion
 from .models import Apunte
 
 
@@ -313,7 +313,7 @@ def editar_asignatura(request, asignatura_id):
         Http404: If the "Asignatura" with the given ID does not exist.
     """
 
-    doc_template = loader.get_template("staff/editar_asignatura.html")
+    doc_template = loader.get_template("staff/editar_titulacion.html")
 
     try:
         asignatura = Asignatura.objects.get(id=asignatura_id)
@@ -324,8 +324,6 @@ def editar_asignatura(request, asignatura_id):
 
         asignatura.nombre = request.POST["nombre"]
         asignatura.creditos = request.POST["creditos"]
-        asignatura.semestre = request.POST["semestre"]
-
         asignatura.save()
 
         return redirect(to="/staff/asignaturas/lista/")
@@ -336,3 +334,140 @@ def editar_asignatura(request, asignatura_id):
     }
     doc = doc_template.render(ctx, request)
     return HttpResponse(doc)
+
+@user_passes_test(lambda u: u.is_staff)
+def crear_titulacion(request):
+    """
+    Handles the creation of a new "Asignatura" object.
+
+    This view renders a template for creating a new "Asignatura" and processes
+    the form submission when the request method is POST. It saves the new
+    "Asignatura" to the database.
+
+    Args:
+        request (HttpRequest): The HTTP request object containing metadata 
+            about the request.
+
+    Returns:
+        HttpResponse: The rendered HTML document for the create asignatura page.
+    """
+
+    doc_template = loader.get_template("staff/crear_titulacion.html")
+
+    if request.method == "POST":
+
+        nombre = request.POST["nombre"]
+        creditos = request.POST["creditos"]
+
+        titulacion = Titulacion(
+            nombre=nombre,
+            creditos=creditos,
+        )
+
+        titulacion.save()
+
+
+    ctx = {
+        "user": request.user.is_authenticated,
+    }
+
+    doc = doc_template.render(ctx, request)
+
+    return HttpResponse(doc)
+
+@user_passes_test(lambda u: u.is_staff)
+def lista_titulacion(request):
+    """
+    Renders a list of all "Asignatura" objects.
+
+    This view retrieves all "Asignatura" objects from the database and renders
+    them in a template. It also includes a context variable to indicate whether
+    the user is authenticated.
+
+    Args:
+        request (HttpRequest): The HTTP request object containing metadata 
+            about the request.
+
+    Returns:
+        HttpResponse: The rendered HTML document for the list of asignaturas.
+    """
+
+    doc_template = loader.get_template("staff/lista_titulacion.html")
+
+    titulaciones = Titulacion.objects.all()
+
+    ctx = {
+        "user": request.user.is_authenticated,
+        "titulaciones": titulaciones,
+    }
+
+    doc = doc_template.render(ctx, request)
+
+    return HttpResponse(doc)
+
+@user_passes_test(lambda u: u.is_staff)
+def delete_titulacion(request, titulacion_id):
+    """
+    Handles the deletion of an "Asignatura" object.
+
+    This view retrieves the specified "Asignatura" object by its ID and deletes
+    it from the database. It then redirects the user to the list of asignaturas.
+
+    Args:
+        request (HttpRequest): The HTTP request object containing metadata 
+            about the request.
+        asignatura_id (int): The ID of the "Asignatura" object to be deleted.
+
+    Returns:
+        HttpResponse: A redirect response to the list of asignaturas.
+    """
+
+    if request.method == "POST":
+        try:
+            titulacion = Titulacion.objects.get(id=titulacion_id)
+            titulacion.delete()
+        except Titulacion.DoesNotExist as error:
+            raise Http404("Asignatura not found.") from error
+
+        return redirect(to="/staff/titulacion/lista/")
+
+@user_passes_test(lambda u: u.is_staff)
+def editar_titulcion(request, titulacion_id):
+    """
+    Handles the editing of an existing "Asignatura" object.
+    This view retrieves the specified "Asignatura" object by its ID and updates
+    its attributes based on the submitted form data. It then redirects the user
+    to the list of asignaturas.
+    Args:
+        request (HttpRequest): The HTTP request object containing metadata 
+            about the request.
+        asignatura_id (int): The ID of the "Asignatura" object to be edited.
+    Returns:
+        HttpResponse: A redirect response to the list of asignaturas.
+    Raises:
+        Http404: If the "Asignatura" with the given ID does not exist.
+    """
+
+    doc_template = loader.get_template("staff/editar_titulacion.html")
+
+    try:
+        titulacion = Titulacion.objects.get(id=titulacion_id)
+    except Titulacion.DoesNotExist:
+        return Http404("Asignatura not found.")
+
+    if request.method == "POST":
+
+        titulacion.nombre = request.POST["nombre"]
+        titulacion.creditos = request.POST["creditos"]
+
+        titulacion.save()
+
+        return redirect(to="/staff/titulacion/lista/")
+
+    ctx = {
+        "user": request.user.is_authenticated,
+        "titulacion": titulacion,
+    }
+    doc = doc_template.render(ctx, request)
+    return HttpResponse(doc)
+

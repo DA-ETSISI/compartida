@@ -1,0 +1,32 @@
+{% include "menu/superior.html" %}
+
+<section class="hero">
+    <h2>Edita una Titulación</h2>
+    <a href="/staff/titulacion/crear/" class="enlace-blanco">Añadir nueva titulación |</a>
+    <a href="/staff/titulacion/lista/" class="enlace-blanco">Lista de titulaciones</a>
+</section>
+
+<div class="upload-form-container">
+    <h2 class="titulo-seccion">Editar titulación</h2>
+    <form method="post" class="formulario-apunte">
+        {% csrf_token %}
+
+        <div class="form-grupo">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" name="nombre" value="{{titulacion.nombre}}">
+        </div>
+
+        <div class="form-grupo">
+            <label for="creditos">créditos</label>
+            <input type="number" id="creditos" name="creditos" value="{{titulacion.creditos}}">
+        </div>
+
+        <div>
+            <h1></h1>
+        </div>
+
+        <button type="submit" class="boton-principal">Guardar</button>
+    </form>
+</div>
+
+{% include "menu/inferior.html" %}

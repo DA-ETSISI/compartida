@@ -1,0 +1,37 @@
+{% include "menu/superior.html" %}
+
+  <section class="hero">
+    <h2>Lista de titulaciones creadas por el staff y para el estaff</h2>
+    <a href="/staff/titulacion/crear/" class="enlace-blanco">Añadir titulacion</a>
+  </section>
+
+  <section class="section">
+    <h2>Asignaturas:</h2>
+    <div class="cards">
+      {% for titulacion in titulaciones %}
+        <div class="card">
+          <!-- Contenido de la tarjeta sin votones -->
+          <div class="card-content" style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+            <h3>
+              <a href="/staff/titulacion/edit/{{titulacion.id}}/">
+                {{ titulacion.nombre }}
+              </a>
+            </h3>
+            </div>
+            <div class="actions">
+              <form action="/staff/titulacion/delete/{{titulacion.id}}/" method="post">
+                  {% csrf_token %}
+                <button type="submit" id="delete-{{ titulacion.id }}" class="boton-principal accion-btn">Borrar</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p>No hay asignaturas disponibles.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+
+{% include "menu/inferior.html" %}
