@@ -67,22 +67,30 @@ def subir_apunte(request) -> HttpResponse:
     if request.method == "POST":
         # Handle file upload
         uploaded_file = request.FILES["archivo_pdf"]
+        asignatura = request.POST["asignatura"]
+        asignatura = Asignatura.objects.get(id=asignatura)
+
         apunte = Apunte(
             titulo=request.POST["tema"],
             pdfdir=uploaded_file,
             user=request.user,
             descripcion=request.POST["descripcion"],
+            asignatura=asignatura,
         )
         apunte.save()
 
     try:
         user = UsrDa.objects.get(id=request.user.id)
+        asignaturas = Asignatura.objects.all()
     except UsrDa.DoesNotExist:
         user = None
+    except Asignatura.DoesNotExist as error:
+        raise Http404("Asignatura not found.") from error
 
     ctx = {
         "user": request.user.is_authenticated,
         "user_data": user,
+        "asignaturas": asignaturas,
     }
 
     doc = doc_template.render(ctx, request)
@@ -123,6 +131,7 @@ def lista_apuntes(request) -> HttpResponse:
         "user_data": user,
         "es_staff": es_staff,
         "es_profesor": es_profesor,
+        "apuntes": apuntes,
     }
 
     doc = doc_template.render(ctx, request)
@@ -212,7 +221,7 @@ def visualizador_apuntes(request, apunte_id):
     except Apunte.DoesNotExist:
         return Http404("Apunte not found.")
 
-    return redirect(to=f"/{apunte.pdfdir}")
+    return redirect(to=f"/media/{apunte.pdfdir}")
 
 @user_passes_test(lambda u: u.is_staff)
 def crear_asignatura(request):

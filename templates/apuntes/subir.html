@@ -8,13 +8,17 @@
     {% csrf_token %}
 
     <div class="form-grupo">
-      <label for="id_asignatura">Asignatura</label>
-      <input type="text" name="asignatura" id="id_asignatura" placeholder="Ej: Matematica discreta" required>
+      <label for="id_titulo">Título</label>
+      <input type="text" name="tema" id="id_titulo" placeholder="Ej: Determinantes" required>
     </div>
 
     <div class="form-grupo">
-      <label for="id_tema">Tema</label>
-      <input type="text" name="tema" id="id_tema" placeholder="Ej: Determinantes" required>
+      <label for="id_asignatura">Asignatura a la que pertenece</label>
+      <select name="asignatura" id="asignatura_id" required>
+        {% for asignatura in asignaturas %}
+          <option value="{{asignatura.id}}">{{asignatura.nombre}}</option>          
+        {% endfor %}
+      </select>
     </div>
 
     <div class="form-grupo">

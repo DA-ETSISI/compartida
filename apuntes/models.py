@@ -35,7 +35,7 @@ class Apunte(models.Model):
     """
 
     titulo = models.CharField(max_length=255)
-    pdfdir = models.FileField(upload_to='media/uploads/apuntes')
+    pdfdir = models.FileField(upload_to='apuntes/')
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     asignatura = models.ForeignKey(Asignatura, on_delete=models.SET_NULL, null=True)
     user = models.ForeignKey(UsrDa, on_delete=models.CASCADE)
@@ -65,7 +65,7 @@ class Ejercicios(models.Model):
     """
 
     enunciado = models.TextField()
-    pdfdir = models.FileField(upload_to='media/uploads/ejercicios', blank=True)
+    pdfdir = models.FileField(upload_to='ejercicios/', blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     asignatura = models.ForeignKey(Asignatura, on_delete=models.SET_NULL, null=True)
     tema =  models.ForeignKey(Tema, on_delete=models.SET_NULL, null=True)
