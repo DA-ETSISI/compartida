@@ -28,9 +28,14 @@ def index(request) -> HttpResponse:
     apuntes = Apunte.objects.order_by("visualizaciones")[:3]
     top_subidas = UsrDa.objects.order_by("recuento_subidas")[:3]
     top_descargas = UsrDa.objects.order_by("recuento_descargas")[:3]
+    try:
+        user = UsrDa.objects.get(id=request.user.id)
+    except UsrDa.DoesNotExist:
+        user = None
 
     ctx = {
         "user": request.user.is_authenticated,
+        "user_data": user,
         "apuntes": apuntes,
         "top_subidas": top_subidas,
         "top_descargas": top_descargas,
@@ -70,8 +75,14 @@ def subir_apunte(request) -> HttpResponse:
         )
         apunte.save()
 
+    try:
+        user = UsrDa.objects.get(id=request.user.id)
+    except UsrDa.DoesNotExist:
+        user = None
+
     ctx = {
         "user": request.user.is_authenticated,
+        "user_data": user,
     }
 
     doc = doc_template.render(ctx, request)
@@ -102,9 +113,14 @@ def lista_apuntes(request) -> HttpResponse:
     es_staff = request.user.is_staff
     es_profesor = request.user.es_profesor
 
+    try:
+        user = UsrDa.objects.get(id=request.user.id)
+    except UsrDa.DoesNotExist:
+        user = None
+
     ctx = {
         "user": request.user.is_authenticated,
-        "apuntes": apuntes,
+        "user_data": user,
         "es_staff": es_staff,
         "es_profesor": es_profesor,
     }
@@ -231,9 +247,14 @@ def crear_asignatura(request):
 
         asignatura.save()
 
+    try:
+        user = UsrDa.objects.get(id=request.user.id)
+    except UsrDa.DoesNotExist:
+        user = None
 
     ctx = {
         "user": request.user.is_authenticated,
+        "user_data": user,
     }
 
     doc = doc_template.render(ctx, request)
@@ -261,8 +282,15 @@ def lista_asignaturas(request):
 
     asignaturas = Asignatura.objects.all()
 
+    try:
+        user = UsrDa.objects.get(id=request.user.id)
+    except UsrDa.DoesNotExist:
+        user = None
+
     ctx = {
         "user": request.user.is_authenticated,
+        "user_data": user,
+        "is_staff": request.user.is_staff,
         "asignaturas": asignaturas,
     }
 
@@ -313,7 +341,7 @@ def editar_asignatura(request, asignatura_id):
         Http404: If the "Asignatura" with the given ID does not exist.
     """
 
-    doc_template = loader.get_template("staff/editar_titulacion.html")
+    doc_template = loader.get_template("staff/editar_asignatura.html")
 
     try:
         asignatura = Asignatura.objects.get(id=asignatura_id)
@@ -328,10 +356,17 @@ def editar_asignatura(request, asignatura_id):
 
         return redirect(to="/staff/asignaturas/lista/")
 
+    try:
+        user = UsrDa.objects.get(id=request.user.id)
+    except UsrDa.DoesNotExist:
+        user = None
+
     ctx = {
         "user": request.user.is_authenticated,
+        "user_data": user,
         "asignatura": asignatura,
     }
+
     doc = doc_template.render(ctx, request)
     return HttpResponse(doc)
 
@@ -366,9 +401,14 @@ def crear_titulacion(request):
 
         titulacion.save()
 
+    try:
+        user = UsrDa.objects.get(id=request.user.id)
+    except UsrDa.DoesNotExist:
+        user = None
 
     ctx = {
         "user": request.user.is_authenticated,
+        "user_data": user,
     }
 
     doc = doc_template.render(ctx, request)
@@ -396,8 +436,14 @@ def lista_titulacion(request):
 
     titulaciones = Titulacion.objects.all()
 
+    try:
+        user = UsrDa.objects.get(id=request.user.id)
+    except UsrDa.DoesNotExist:
+        user = None
+
     ctx = {
         "user": request.user.is_authenticated,
+        "user_data": user,
         "titulaciones": titulaciones,
     }
 
@@ -464,10 +510,15 @@ def editar_titulcion(request, titulacion_id):
 
         return redirect(to="/staff/titulacion/lista/")
 
+    try:
+        user = UsrDa.objects.get(id=request.user.id)
+    except UsrDa.DoesNotExist:
+        user = None
+
     ctx = {
         "user": request.user.is_authenticated,
+        "user_data": user,
         "titulacion": titulacion,
     }
     doc = doc_template.render(ctx, request)
     return HttpResponse(doc)
-

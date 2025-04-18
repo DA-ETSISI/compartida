@@ -15,13 +15,21 @@
         <p>La plataforma colaborativa de apuntes de la Delegación de Alumnos de la ETSISI</p>
     </header>
     <nav>
-        <a href="#">Inicio</a>
-        <a href="#apuntes">Apuntes</a>
-        <a href="#concursos">Concursos</a>
+        <a href="/" class="enlace-blanco">Inicio</a>
+        <a href="/apuntes" class="enlace-blanco">Apuntes</a>
+        {% if user_data.is_staff %}
+        <a href="/staff/asignaturas/lista" class="enlace-blanco">Asignaturas</a>
+        <a href="/staff/titulacion/lista/" class="enlace-blanco">Titulaciones</a>
+        {% endif %}
         {% if user %}
-        <a href="/">registrado</a>
+        <a href="/" class="enlace-blanco">{{user_data.preferred_username}}</a>
+        <form action="/usr/logout/" method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="enlace-blanco boton-como-enlace">Cerrar sesión</button>
+        </form>
+        
         {% else %}
-        <a href="usr/login">Login</a>
+        <a href="usr/login" class="enlace-blanco">Login</a>
         {% endif %}
         
     </nav>

@@ -176,3 +176,21 @@ footer {
     text-decoration: underline;
 }
 
+.boton-como-enlace {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0 15px;
+    font: inherit;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline;
+    line-height: 1.5;
+}
+
+.boton-como-enlace:hover {
+    color: #e0e0e0;
+    text-decoration: underline;
+}
