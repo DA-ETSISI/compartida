@@ -116,7 +116,7 @@ def lista_apuntes(request) -> HttpResponse:
 
     doc_template = loader.get_template("apuntes/lista.html")
 
-    apuntes = Apunte.objects.filter(visible=True).order_by("visualizaciones", "-fecha_subida")
+    apuntes = Apunte.objects.filter(visible=True).order_by("visualizaciones", "-fecha_creacion")
 
     es_staff = request.user.is_staff
     es_profesor = request.user.es_profesor
@@ -197,7 +197,7 @@ def apoyo_docente(request, apunte_id) -> redirect:
         return redirect(to="/apuntes/")
 
 @login_required(login_url="/usr/login/")
-def visualizador_apuntes(request, apunte_id):
+def visualizador_apuntes(request, apunte_id) -> redirect:
     """
     Handles the display of a specific "Apunte" object.
 
@@ -219,7 +219,7 @@ def visualizador_apuntes(request, apunte_id):
     except Apunte.DoesNotExist as error:
         raise Http404("Apunte not found.") from error
 
-    if apunte.visible:
+    if apunte.visible or request.user.is_staff:
         apunte.visualizaciones += 1
         apunte.save()
         request.user.recuento_visualizaciones += 1
@@ -228,7 +228,7 @@ def visualizador_apuntes(request, apunte_id):
         raise Http404("Apunte not found.")
 
 @user_passes_test(lambda u: u.is_staff)
-def crear_asignatura(request):
+def crear_asignatura(request) -> HttpResponse:
     """
     Handles the creation of a new "Asignatura" object.
 
@@ -275,7 +275,7 @@ def crear_asignatura(request):
     return HttpResponse(doc)
 
 @user_passes_test(lambda u: u.is_staff)
-def lista_asignaturas(request):
+def lista_asignaturas(request) -> HttpResponse:
     """
     Renders a list of all "Asignatura" objects.
 
@@ -312,7 +312,7 @@ def lista_asignaturas(request):
     return HttpResponse(doc)
 
 @user_passes_test(lambda u: u.is_staff)
-def delete_asignatura(request, asignatura_id):
+def delete_asignatura(request, asignatura_id) -> redirect:
     """
     Handles the deletion of an "Asignatura" object.
 
@@ -338,7 +338,7 @@ def delete_asignatura(request, asignatura_id):
         return redirect(to="/staff/asignaturas/lista/")
 
 @user_passes_test(lambda u: u.is_staff)
-def editar_asignatura(request, asignatura_id):
+def editar_asignatura(request, asignatura_id) -> HttpResponse:
     """
     Handles the editing of an existing "Asignatura" object.
     This view retrieves the specified "Asignatura" object by its ID and updates
@@ -358,8 +358,8 @@ def editar_asignatura(request, asignatura_id):
 
     try:
         asignatura = Asignatura.objects.get(id=asignatura_id)
-    except Asignatura.DoesNotExist:
-        return Http404("Asignatura not found.")
+    except Asignatura.DoesNotExist as error:
+        raise Http404("Asignatura not found.") from error
 
     if request.method == "POST":
 
@@ -384,7 +384,7 @@ def editar_asignatura(request, asignatura_id):
     return HttpResponse(doc)
 
 @user_passes_test(lambda u: u.is_staff)
-def crear_titulacion(request):
+def crear_titulacion(request) -> HttpResponse:
     """
     Handles the creation of a new "Asignatura" object.
 
@@ -429,7 +429,7 @@ def crear_titulacion(request):
     return HttpResponse(doc)
 
 @user_passes_test(lambda u: u.is_staff)
-def lista_titulacion(request):
+def lista_titulacion(request) -> HttpResponse:
     """
     Renders a list of all "Asignatura" objects.
 
@@ -465,7 +465,7 @@ def lista_titulacion(request):
     return HttpResponse(doc)
 
 @user_passes_test(lambda u: u.is_staff)
-def delete_titulacion(request, titulacion_id):
+def delete_titulacion(request, titulacion_id) -> redirect:
     """
     Handles the deletion of an "Asignatura" object.
 
@@ -491,7 +491,7 @@ def delete_titulacion(request, titulacion_id):
         return redirect(to="/staff/titulacion/lista/")
 
 @user_passes_test(lambda u: u.is_staff)
-def editar_titulcion(request, titulacion_id):
+def editar_titulcion(request, titulacion_id) -> HttpResponse:
     """
     Handles the editing of an existing "Asignatura" object.
     This view retrieves the specified "Asignatura" object by its ID and updates
@@ -535,3 +535,50 @@ def editar_titulcion(request, titulacion_id):
     }
     doc = doc_template.render(ctx, request)
     return HttpResponse(doc)
+
+@user_passes_test(lambda u: u.is_staff)
+def aprobar_apuntes(request) -> HttpResponse:
+    """
+    Handles the approval of "Apunte" objects.
+    This view retrieves all "Apunte" objects that are not visible and renders
+    them in a template for approval. It also includes a context variable to
+    indicate whether the user is authenticated.
+    Args:
+        request (HttpRequest): The HTTP request object containing metadata 
+            about the request.
+    Returns:
+        HttpResponse: The rendered HTML document for the approval page.
+    """
+    doc_template = loader.get_template("staff/aprobar_apuntes.html")
+    apuntes = Apunte.objects.filter(visible=False).order_by("fecha_creacion")
+
+    ctx = {
+        "user": request.user.is_authenticated,
+        "user_data": request.user,
+        "apuntes": apuntes,
+    }
+    doc = doc_template.render(ctx, request)
+    return HttpResponse(doc)
+
+@user_passes_test(lambda u: u.is_staff)
+def aprobado(request, apunte_id) -> redirect:
+    """
+    Handles the approval of a specific "Apunte" object.
+    This view retrieves the specified "Apunte" object by its ID and sets its
+    visibility to True. It then redirects the user to the list of apuntes.
+    Args:
+        request (HttpRequest): The HTTP request object containing metadata 
+            about the request.
+        apunte_id (int): The ID of the "Apunte" object to be approved.
+    Returns:
+        HttpResponse: A redirect response to the list of apuntes.
+    """
+    if request.method == "POST":
+        try:
+            apunte = Apunte.objects.get(id=apunte_id)
+            apunte.visible = True
+            apunte.save()
+        except Apunte.DoesNotExist as error:
+            raise Http404("Apunte not found.") from error
+
+        return redirect(to="/staff/apuntes_aprobar/")

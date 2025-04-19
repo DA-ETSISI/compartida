@@ -4,9 +4,7 @@
     <h2>Comparte y descubre los mejores apuntes</h2>
     <p>Explora, colabora y comparte tus conocimientos con la comunidad.</p>
     <a href="/upload/" class="enlace-blanco">Subir apuntes |</a>
-    {% if es_staff %}
-      <a href="/staff/apuntes_aprobar/" class="enlace-blanco">Apuntes por aprobar</a>
-    {% endif %}
+    <a href="/apuntes/" class="enlace-blanco">Lista de apuntes</a>
   </section>
 
   <section class="section">
@@ -18,25 +16,21 @@
           <div class="card-content" style="display: flex; align-items: center; justify-content: space-between;">
             <div>
             <h3>
-              <a href="visualizador/{{apunte.id}}/">
+              <a href="/apuntes/visualizador/{{apunte.id}}/">
                 {{ apunte.titulo }}
               </a>
             </h3>
             <p>{{ apunte.descripcion }}</p>
             </div>
             <div class="actions">
-              {% if es_staff %}
-                <form action="delete/{{apunte.id}}/" method="post">
-                  {% csrf_token %}
-                  <button type="submit" id="delete-{{ apunte.id }}" class="boton-principal accion-btn">Borrar</button>
-                </form>
-              {% endif %}
-              {% if es_profesor %}
-                <form action="apoyo_docente/{{apunte.id}}/" method="post">
-                  {% csrf_token %}
-                  <button type="submit" id="apoyo-{{ apunte.id }}" class="boton-principal accion-btn apoyo">Apoyo Docente</button>
-                </form>
-              {% endif %}
+              <form action="/apuntes/delete/{{apunte.id}}/" method="post">
+                {% csrf_token %}
+                <button type="submit" id="delete-{{ apunte.id }}" class="boton-principal accion-btn">Borrar</button>
+              </form>
+              <form action="{{apunte.id}}/" method="post">
+                {% csrf_token %}
+                <button type="submit" id="aprobar-{{apunte.id}}" class="boton-principal accion-btn">Aprobar</button>
+              </form>
             </div>
           </div>
         </div>

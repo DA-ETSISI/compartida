@@ -32,5 +32,7 @@ urlpatterns = [
     path("staff/titulacion/lista/", views.lista_titulacion),
     path("staff/titulacion/delete/<int:titulacion_id>/", views.delete_titulacion),
     path("staff/titulacion/edit/<int:titulacion_id>/", views.editar_titulcion),
+    path("staff/apuntes_aprobar/", views.aprobar_apuntes),
+    path("staff/apuntes_aprobar/<int:apunte_id>/", views.aprobado),
 
 ]
