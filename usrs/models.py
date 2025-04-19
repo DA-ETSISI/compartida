@@ -90,12 +90,14 @@ class UsrDaManager(BaseUserManager):
         user = self.model(
             preferred_username=preferred_username,
             email=self.normalize_email(email),
+            es_profesor=es_profesor,
             **extra_fields
         )
-        if es_profesor:
-            Profesor.objects.create(user=user, asignaturas=None)
         user.set_unusable_password()
         user.save()
+        if es_profesor:
+            profesor = Profesor.objects.create(user=user)
+            profesor.save()
 
         return user
 
@@ -200,4 +202,4 @@ class Profesor(models.Model):
     """
 
     user = models.OneToOneField(UsrDa, on_delete=models.CASCADE)
-    asignaturas = models.ManyToManyField(Asignatura)
+    asignaturas = models.ManyToManyField(Asignatura, null=True, blank=True)

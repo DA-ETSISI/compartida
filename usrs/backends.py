@@ -76,10 +76,13 @@ class keycloakOIDCAuthenticationBackend(OIDCAuthenticationBackend):
         if UsrDa.objects.filter(preferred_username=preferred_username).exists():
             return UsrDa.objects.get(preferred_username=preferred_username)
 
-        if  claims.get('UPMClassCodes')[-1] in "DMUPRB":
+        if claims.get('UPMClassCodes').split(':')[-1].strip() in {"D", "M", "U", "P", "R", "B"}:
+            print(claims.get('UPMClassCodes').split(':')[-1])
+            print("entro aqui")
             es_profesor = True
         else:
             es_profesor = False
+            print(claims.get('UPMClassCodes').split(':')[-1])
 
         user = UsrDa.objects.create_user(
             preferred_username=preferred_username,
