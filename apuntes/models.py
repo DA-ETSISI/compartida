@@ -31,6 +31,8 @@ class Apunte(models.Model):
             representing the professors who support or are associated with the note.
         descripcion (CharField): A textual description of the note. Defaults to an empty string.
         visualizaciones (IntegerField): The number of times the note has been viewed. Defaults to 0.
+        visible (BooleanField): A flag indicating whether the note is visible to users. 
+            Defaults to True.
         tema (ForeignKey): A foreign key to the Tema model, representing the topic associated.
     """
 
@@ -42,6 +44,7 @@ class Apunte(models.Model):
     apoyo_docente = models.ManyToManyField(Profesor)
     descripcion = models.TextField(default="")
     visualizaciones = models.IntegerField(default=0)
+    visible = models.BooleanField(default=False)
     tema = models.ForeignKey(Tema, on_delete=models.SET_NULL, null=True)
 
 class Ejercicios(models.Model):
@@ -50,8 +53,6 @@ class Ejercicios(models.Model):
 
     Attributes:
         enunciado (TextField): The statement or description of the exercise.
-        pdfdir (FileField): Optional file field to upload a PDF related to the exercise.
-            Files are uploaded to the 'uploads/ejercicios' directory.
         fecha_creacion (DateTimeField): The timestamp when the exercise was created.
             Automatically set to the current date and time when created.
         asignatura (ForeignKey): A foreign key linking the exercise to an Asignatura instance.
@@ -60,14 +61,16 @@ class Ejercicios(models.Model):
             Allows null values and sets the field to NULL if the related Tema is deleted.
         visualizaciones (IntegerField): The number of times the exercise has been viewed.
             Defaults to 0.
+        visible (BooleanField): A flag indicating whether the exercise is visible to users.
+            Defaults to True.
         user (ForeignKey): A foreign key linking the exercise to a UsrDa instance.
             Deleting the related UsrDa will also delete the exercise.
     """
 
     enunciado = models.TextField()
-    pdfdir = models.FileField(upload_to='ejercicios/', blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     asignatura = models.ForeignKey(Asignatura, on_delete=models.SET_NULL, null=True)
     tema =  models.ForeignKey(Tema, on_delete=models.SET_NULL, null=True)
     visualizaciones = models.IntegerField(default=0)
+    visible = models.BooleanField(default=False)
     user = models.ForeignKey(UsrDa, on_delete=models.CASCADE)

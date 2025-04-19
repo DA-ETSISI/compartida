@@ -16,6 +16,12 @@ def logout(request):
     they will be redirected to the login page.
     The view uses the request.user.logout() method to log out the user,
     and then redirects them to the home page.
+
+    Args:
+        request (HttpRequest): The HTTP request object containing the session data.
+
+    Returns:
+        HttpResponseRedirect: A redirect to the home page after logging out.
     """
 
     request.session.flush()  # Clear the session data

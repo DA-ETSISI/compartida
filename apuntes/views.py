@@ -27,7 +27,7 @@ def index(request) -> HttpResponse:
 
     apuntes = Apunte.objects.order_by("visualizaciones")[:3]
     top_subidas = UsrDa.objects.order_by("recuento_subidas")[:3]
-    top_descargas = UsrDa.objects.order_by("recuento_descargas")[:3]
+    top_descargas = UsrDa.objects.order_by("recuento_visualizaciones")[:3]
     try:
         user = UsrDa.objects.get(id=request.user.id)
     except UsrDa.DoesNotExist:
@@ -116,7 +116,7 @@ def lista_apuntes(request) -> HttpResponse:
 
     doc_template = loader.get_template("apuntes/lista.html")
 
-    apuntes = Apunte.objects.all().order_by("visualizaciones", "-fecha_creacion")
+    apuntes = Apunte.objects.filter(visible=True).order_by("visualizaciones", "-fecha_subida")
 
     es_staff = request.user.is_staff
     es_profesor = request.user.es_profesor
@@ -139,7 +139,7 @@ def lista_apuntes(request) -> HttpResponse:
     return HttpResponse(doc)
 
 @user_passes_test(lambda u: u.is_staff)
-def eliminar_apunte(request, apunte_id):
+def eliminar_apunte(request, apunte_id) -> redirect:
     """
     Handles the deletion of an "Apunte" object.
 
@@ -168,7 +168,7 @@ def eliminar_apunte(request, apunte_id):
         return redirect(to="/apuntes/")
 
 @user_passes_test(lambda u: u.es_profesor)
-def apoyo_docente(request, apunte_id):
+def apoyo_docente(request, apunte_id) -> redirect:
     """
     Assigns the current user (professor) as a supporting staff member for a 
     specific "apunte" (note).
@@ -216,12 +216,16 @@ def visualizador_apuntes(request, apunte_id):
 
     try:
         apunte = Apunte.objects.get(id=apunte_id)
+    except Apunte.DoesNotExist as error:
+        raise Http404("Apunte not found.") from error
+
+    if apunte.visible:
         apunte.visualizaciones += 1
         apunte.save()
-    except Apunte.DoesNotExist:
-        return Http404("Apunte not found.")
-
-    return redirect(to=f"/media/{apunte.pdfdir}")
+        request.user.recuento_visualizaciones += 1
+        return redirect(to=f"/media/{apunte.pdfdir}")
+    else:
+        raise Http404("Apunte not found.")
 
 @user_passes_test(lambda u: u.is_staff)
 def crear_asignatura(request):

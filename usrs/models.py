@@ -138,7 +138,7 @@ class UsrDa(AbstractBaseUser, PermissionsMixin):
         titulacion (ForeignKey): A foreign key to the `Titulacion` model, 
             representing the user's degree program.
         recuento_subidas (int): The count of uploads made by the user. Defaults to 0.
-        recuento_descargas (int): The count of downloads made by the user. Defaults to 0.
+        recuento_visualizaciones (int): The count of views made by the user. Defaults to 0.
         es_profesor (bool): A flag indicating whether the user is a professor. Defaults to False.
         is_staff (bool): A flag indicating whether the user has staff privileges. Defaults to False.
         is_active (bool): A flag indicating whether the user account is active. Defaults to True.
@@ -170,7 +170,7 @@ class UsrDa(AbstractBaseUser, PermissionsMixin):
 
     titulacion = models.ForeignKey(Titulacion, on_delete=models.SET_NULL, blank= True, null=True)
     recuento_subidas = models.IntegerField(default=0)
-    recuento_descargas = models.IntegerField(default=0)
+    recuento_visualizaciones = models.IntegerField(default=0)
     es_profesor = models.BooleanField(default=False)
 
     is_staff = models.BooleanField(default=False)
