@@ -8,7 +8,7 @@ Por [@Pdrj09](https://github.com/Pdrj09) con ❤️ para [@DA-ETSISI](https://gi
 Usa el gestor de paquetes de Python [pip](https://pip.pypa.io/en/stable/) para descargar los paquetes de Django y Mozilla Django OIDC.
 
 ```bash
-pip install django mozilla_django_oidc decouple
+pip install django mozilla_django_oidc python-decouple
 ```
 
 Clona el repositorio.
