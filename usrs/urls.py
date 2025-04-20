@@ -17,10 +17,14 @@ Including another URLconf
 from mozilla_django_oidc import views as oidc_views
 from django.urls import path
 
+from .views import lista_usuarios, editat_usuario
+
 urlpatterns = [
     path('login/', oidc_views.OIDCAuthenticationRequestView.as_view(),
          name='oidc_authentication_init'),
     path('login/callback/', oidc_views.OIDCAuthenticationCallbackView.as_view(),
           name='oidc_authentication_callback'),
     path('logout/', oidc_views.OIDCLogoutView.as_view(), name='oidc_logout'),
+    path('usuarios/', lista_usuarios, name='lista_usuarios'),
+    path('usuarios/editar/<int:user_id>', editat_usuario, name='logout'),
 ]
