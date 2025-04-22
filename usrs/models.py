@@ -202,4 +202,4 @@ class Profesor(models.Model):
     """
 
     user = models.OneToOneField(UsrDa, on_delete=models.CASCADE)
-    asignaturas = models.ManyToManyField(Asignatura, null=True, blank=True)
+    asignaturas = models.ManyToManyField(Asignatura, blank=True)
