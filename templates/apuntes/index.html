@@ -28,25 +28,25 @@
             <div class="ranking-box">
                 <h3>📚 Apuntes más populares</h3>
                 <ol>
-                    <li>Apunte de EDA - Pedro M. (⭐ 4.9)</li>
-                    <li>Álgebra Lineal - Lucía G. (⭐ 4.8)</li>
-                    <li>POO Java - Álvaro D. (⭐ 4.7)</li>
+                    {% for apunte in apuntes %}
+                      <li>{{apunte.titulo}} - {{apunte.visualizaciones}}</li>
+                    {% endfor %}
                 </ol>
             </div>
             <div class="ranking-box">
-                <h3>📥 Usuarios con más descargas</h3>
+                <h3>📥 Usuarios con apuntes visualizados</h3>
                 <ol>
-                    <li>Marta S. (1234 descargas)</li>
-                    <li>Iván R. (1178 descargas)</li>
-                    <li>Sara T. (980 descargas)</li>
+                    {% for users in top_descargas %}
+                      <li>{{users.given_name}} - {{users.recuento_visualizaciones}}</li>
+                    {% endfor %}
                 </ol>
             </div>
             <div class="ranking-box">
                 <h3>📤 Usuarios con más subidas</h3>
                 <ol>
-                    <li>Juan C. (42 apuntes)</li>
-                    <li>Carlos V. (37 apuntes)</li>
-                    <li>Ana F. (30 apuntes)</li>
+                    {% for users in top_subidas %}
+                      <li>{{users.given_name}} - {{users.recuento_subidas}}</li>
+                    {% endfor %}
                 </ol>
             </div>
         </div>

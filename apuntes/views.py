@@ -25,9 +25,9 @@ def index(request) -> HttpResponse:
 
     doc_template = loader.get_template("apuntes/index.html")
 
-    apuntes = Apunte.objects.order_by("visualizaciones")[:3]
-    top_subidas = UsrDa.objects.order_by("recuento_subidas")[:3]
-    top_descargas = UsrDa.objects.order_by("recuento_visualizaciones")[:3]
+    apuntes = Apunte.objects.order_by("-visualizaciones")[:3]
+    top_subidas = UsrDa.objects.order_by("-recuento_subidas")[:3]
+    top_descargas = UsrDa.objects.order_by("-recuento_visualizaciones")[:3]
     try:
         user = UsrDa.objects.get(id=request.user.id)
     except UsrDa.DoesNotExist:
@@ -116,7 +116,7 @@ def lista_apuntes(request) -> HttpResponse:
 
     doc_template = loader.get_template("apuntes/lista.html")
 
-    apuntes = Apunte.objects.filter(visible=True).order_by("visualizaciones", "-fecha_creacion")
+    apuntes = Apunte.objects.filter(visible=True).order_by("visualizaciones", "fecha_creacion")
 
     es_staff = request.user.is_staff
     es_profesor = request.user.es_profesor
@@ -223,6 +223,7 @@ def visualizador_apuntes(request, apunte_id) -> redirect:
         apunte.visualizaciones += 1
         apunte.save()
         request.user.recuento_visualizaciones += 1
+        request.user.save()
         return redirect(to=f"/media/{apunte.pdfdir}")
     else:
         raise Http404("Apunte not found.")
@@ -578,6 +579,9 @@ def aprobado(request, apunte_id) -> redirect:
             apunte = Apunte.objects.get(id=apunte_id)
             apunte.visible = True
             apunte.save()
+            usr = UsrDa.objects.get(id=apunte.user.id)
+            usr.recuento_subidas += 1
+            usr.save()
         except Apunte.DoesNotExist as error:
             raise Http404("Apunte not found.") from error
 
