@@ -1,0 +1,18 @@
+{% include "menu/superior.html" %}
+
+<section class="hero">
+    <h2>Edita un usuario</h2>
+</section>
+
+<div class="upload-form-container">
+    <h2 class="titulo-seccion">Datos del usuario</h2>
+    <p>preferred_username: {{user_data.preferred_username}}</p>
+    <p>email: {{user_data.email}}</p>
+    <p>name: {{user_data.name}}</p>
+    <p>given_name: {{user_data.given_name}}</p>
+    <p>family_name: {{user_data.family_name}}</p>
+    <p>Recuento de visualizaciones: {{user_data.recuento_visualizaciones}}</p>
+    <p>Recuento de subidas: {{user_data.recuento_subidas}}</p>
+    
+</div>
+{% include "menu/inferior.html" %}

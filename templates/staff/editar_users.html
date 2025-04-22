@@ -1,0 +1,29 @@
+{% include "menu/superior.html" %}
+
+<section class="hero">
+    <h2>Edita un usuario</h2>
+</section>
+
+<div class="upload-form-container">
+    <h2 class="titulo-seccion">Editar nueva asignatura</h2>
+    <p>preferred_username: {{usuario.preferred_username}}</p>
+    <p>email: {{usuario.email}}</p>
+    <p>name: {{usuario.name}}</p>
+    <p>given_name: {{usuario.given_name}}</p>
+    <p>family_name: {{usuario.family_name}}</p>
+    <p>Es profesor: {{usuario.es_profesor}}</p>
+    <form method="post" class="formulario-apunte">
+        {% csrf_token %}
+
+        <div class="form-grupo">
+            <label for="staff">Es staff</label>
+            <input type="checkbox" name="staff" id="staff" {% if usuario.is_staff %}
+            checked 
+            {% endif %}>
+        </div>
+
+        <button type="submit" class="boton-principal">Guardar</button>
+    </form>
+</div>
+
+{% include "menu/inferior.html" %}

@@ -49,8 +49,14 @@ def lista_usuarios(request):
     """
     doc_template = loader.get_template('staff/lista_users.html')
 
+    try:
+        user = UsrDa.objects.get(id=request.user.id)
+    except UsrDa.DoesNotExist:
+        user = None
+
     ctx = {
-        'user': UsrDa.objects.get(id=request.user.id),
+        "user": request.user.is_authenticated,
+        "user_data": user,
         'usuarios': UsrDa.objects.all(),
     }
 
@@ -73,11 +79,52 @@ def editat_usuario(request, user_id):
     Returns:
         HttpResponse: A response containing the edit user form.
     """
-    doc_template = loader.get_template('usrs/editar_users.html')
+    doc_template = loader.get_template('staff/editar_users.html')
+
+    if request.method == 'POST':
+        user = UsrDa.objects.get(id=user_id)
+        user.is_staff = 'staff' in request.POST
+
+        user.save()
+
+    try:
+        user = UsrDa.objects.get(id=request.user.id)
+    except UsrDa.DoesNotExist:
+        user = None
 
     ctx = {
-        'title': 'Edita Usuario',
+        "user": request.user.is_authenticated,
+        "user_data": user,
         'usuario': UsrDa.objects.get(id=user_id),
+    }
+
+    doc = doc_template.render(ctx, request)
+
+    return HttpResponse(doc)
+
+def user_self(request):
+    """
+    View to get the current user's information.
+    This view is protected by the login_required decorator, which means
+    that only authenticated users can access it. If a user is not authenticated,
+    they will be redirected to the login page.
+
+    Args:
+        request (HttpRequest): The HTTP request object containing the session data.
+
+    Returns:
+        HttpResponse: A response containing the current user's information.
+    """
+    doc_template = loader.get_template('apuntes/self_user.html')
+
+    try:
+        user = UsrDa.objects.get(id=request.user.id)
+    except UsrDa.DoesNotExist:
+        user = None
+
+    ctx = {
+        "user": request.user.is_authenticated,
+        "user_data": user,
     }
 
     doc = doc_template.render(ctx, request)

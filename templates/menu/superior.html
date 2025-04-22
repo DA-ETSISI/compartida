@@ -20,9 +20,10 @@
         {% if user_data.is_staff %}
         <a href="/staff/asignaturas/lista" class="enlace-blanco">Asignaturas</a>
         <a href="/staff/titulacion/lista/" class="enlace-blanco">Titulaciones</a>
+        <a href="/usr/usuarios/">Usuarios</a>
         {% endif %}
         {% if user %}
-        <a href="/" class="enlace-blanco">{{user_data.preferred_username}}</a>
+        <a href="/usr/self/" class="enlace-blanco">{{user_data.preferred_username}}</a>
         <form action="/usr/logout/" method="post" style="display: inline;">
             {% csrf_token %}
             <button type="submit" class="enlace-blanco boton-como-enlace">Cerrar sesión</button>
