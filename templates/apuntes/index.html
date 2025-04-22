@@ -26,7 +26,7 @@
         <h2 class="ranking-title">🏆 Rankings comparti<span class="azul">DA</span></h2>
         <div class="ranking-container">
             <div class="ranking-box">
-                <h3>📚 Apuntes más populares</h3>
+                <h3>📚 Top apuntes</h3>
                 <ol>
                     {% for apunte in apuntes %}
                       <li>{{apunte.titulo}} - {{apunte.visualizaciones}}</li>
@@ -34,7 +34,7 @@
                 </ol>
             </div>
             <div class="ranking-box">
-                <h3>📥 Usuarios con apuntes visualizados</h3>
+                <h3>📥 Top usuarios visualizaciones</h3>
                 <ol>
                     {% for users in top_descargas %}
                       <li>{{users.given_name}} - {{users.recuento_visualizaciones}}</li>
@@ -42,7 +42,7 @@
                 </ol>
             </div>
             <div class="ranking-box">
-                <h3>📤 Usuarios con más subidas</h3>
+                <h3>📤 Top Usuarios subidas</h3>
                 <ol>
                     {% for users in top_subidas %}
                       <li>{{users.given_name}} - {{users.recuento_subidas}}</li>
