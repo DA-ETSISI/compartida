@@ -10,6 +10,27 @@
   </section>
 
   <section class="section">
+        
+    <form action="" method="post">
+      {% csrf_token %}
+      <div class="form-grupo">
+        <label for="nombre">Buscar asignaturas: </label>
+        <input type="text" id="nombre" name="nombre">
+      </div>
+
+      <div class="form-grupo">
+        <label for="id_asignatura">Asignatura a la que pertenece</label>
+        <select name="asignatura" id="asignatura_id" required>
+            <option value="_">    </option>          
+          {% for asignatura in asignaturas %}
+            <option value="{{asignatura.id}}">{{asignatura.nombre}}</option>          
+          {% endfor %}
+        </select>
+        <button type="submit" id="apoyo" class="boton-principal accion-btn apoyo">Buscar</button>
+      </div>  
+    
+    </form>
+    
     <h2>Apuntes disponibles</h2>
     <div class="cards">
       {% for apunte in apuntes %}

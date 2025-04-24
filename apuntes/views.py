@@ -126,12 +126,37 @@ def lista_apuntes(request) -> HttpResponse:
     except UsrDa.DoesNotExist:
         user = None
 
+    if request.method == "POST":
+        try:
+            if request.POST["asignatura"] == "_":
+                apuntes = Apunte.objects.filter(visible=True,
+                                                titulo__icontains=request.POST["nombre"]
+                                                ).order_by("visualizaciones",
+                                                        "fecha_creacion")
+            elif request.POST["nombre"] != "":
+                apuntes = Apunte.objects.filter(visible=True,
+                                                asignatura=Asignatura.objects.get(
+                                                    id=request.POST["asignatura"]),
+                                                titulo__icontains=request.POST["nombre"]
+                                                ).order_by("visualizaciones",
+                                                        "fecha_creacion")
+            else:
+                print("este")
+                apuntes = Apunte.objects.filter(visible=True,
+                                                asignatura=Asignatura.objects.get(
+                                                    id=request.POST["asignatura"]),
+                                                ).order_by("visualizaciones",
+                                                        "fecha_creacion")
+        except Apunte.DoesNotExist:
+            apuntes = []
+
     ctx = {
         "user": request.user.is_authenticated,
         "user_data": user,
         "es_staff": es_staff,
         "es_profesor": es_profesor,
         "apuntes": apuntes,
+        "asignaturas": Asignatura.objects.all(),
     }
 
     doc = doc_template.render(ctx, request)
