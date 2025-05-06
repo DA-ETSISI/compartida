@@ -62,35 +62,36 @@ class keycloakOIDCAuthenticationBackend(OIDCAuthenticationBackend):
             If the user are PDI create a Profesor instance.
         """
         # Extract the necessary information from the claims
-        preferred_username = claims.get('preferred_username')
-        email = claims.get('email')
-        given_name = claims.get('given_name')
-        family_name = claims.get('family_name')
-        name = claims.get('name')
-        UPMClassCode = claims.get('UPMClassCodes')
+        preferred_username = claims.get('uid')
+        email = claims.get('upmMailMainAddress')
+        given_name = claims.get('givenName')
+        name = claims.get('displayName')
+        codigo_de_escuela = claims.get('upmCentre')
+        tipo_usuario = claims.get('employeeType')
 
-        if not config('CODIGO_DE_ESCUELA') in UPMClassCode:
-            print("entro aqui")
-            raise PermissionDenied("el usuario es de otra escuela")
+        es_escuela= False
+        for code in codigo_de_escuela:
+            if code == config('CODIGO_DE_ESCUELA'):
+                es_escuela = True
+
+        if not es_escuela:
+            raise PermissionDenied("No tienes permiso para acceder a esta aplicación")
 
         if UsrDa.objects.filter(preferred_username=preferred_username).exists():
             return UsrDa.objects.get(preferred_username=preferred_username)
 
-        if claims.get('UPMClassCodes').split(':')[-1].strip() in {"D", "M", "U", "P", "R", "B"}:
-            print(claims.get('UPMClassCodes').split(':')[-1])
-            print("entro aqui")
-            es_profesor = True
-        else:
-            es_profesor = False
-            print(claims.get('UPMClassCodes').split(':')[-1])
+        es_profesor = False
+        for tipo in tipo_usuario:
+            if tipo in "DJHMQUPC":
+                es_profesor = True
 
         user = UsrDa.objects.create_user(
             preferred_username=preferred_username,
             email=email,
             name=name,
             given_name=given_name,
-            family_name=family_name,
-            UPMClassCode=UPMClassCode,
+            codigo_de_escuela=codigo_de_escuela,
+            tipo_usuario=tipo_usuario,
             es_profesor=es_profesor,
         )
 

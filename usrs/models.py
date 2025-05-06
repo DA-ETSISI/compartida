@@ -165,10 +165,10 @@ class UsrDa(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True, default="")
     name = models.CharField(max_length=255, default="")
     given_name = models.CharField(max_length=255, default="")
-    family_name = models.CharField(max_length=255, default="")
 
-    # Código upm dado por keycloak (siu)
-    UPMClassCode = models.CharField(max_length=255, default="")
+    # Códigos upm dado por keycloak (siu)
+    codigos_escuela = models.JSONField(default=list)
+    tipo_usuario = models.JSONField(default=list)
 
     titulacion = models.ForeignKey(Titulacion, on_delete=models.SET_NULL, blank= True, null=True)
     recuento_subidas = models.IntegerField(default=0)

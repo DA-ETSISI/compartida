@@ -79,6 +79,9 @@ OIDC_OP_USER_ENDPOINT = f'http://{KC_HOST}/realms/{KC_REALM}/protocol/openid-con
 OIDC_OP_JWKS_ENDPOINT = f'http://{KC_HOST}/realms/{KC_REALM}/protocol/openid-connect/certs'
 OIDC_OP_LOGOUT_ENDPOINT = f"http://{KC_HOST}/realms/{KC_REALM}/protocol/openid-connect/logout"
 
+OIDC_RP_SCOPES = 'openid profile'
+
+
 OIDC_RP_SIGN_ALGO = config('KC_ALGO')
 
 LOGIN_REDIRECT_URL = '/'
@@ -109,6 +112,13 @@ WSGI_APPLICATION = "compartida.wsgi.application"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": "db.sqlite3",
+    }
+}
+"""
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # MariaDB usa el backend de MySQL
         'NAME': config('DB_NAME'),
@@ -120,7 +130,7 @@ DATABASES = {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
         }
     }
-}
+}"""
 
 AUTH_USER_MODEL = 'usrs.UsrDa'
 
