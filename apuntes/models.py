@@ -10,7 +10,7 @@ Models:
         creation date, associated subject, associated topic, view count, and uploader.
 """
 from django.db import models
-from usrs.models import Asignatura, UsrDa, Profesor, Tema
+from usrs.models import Asignatura, UsrDa, Profesor
 
 class Apunte(models.Model):
     """
@@ -33,7 +33,6 @@ class Apunte(models.Model):
         visualizaciones (IntegerField): The number of times the note has been viewed. Defaults to 0.
         visible (BooleanField): A flag indicating whether the note is visible to users. 
             Defaults to True.
-        tema (ForeignKey): A foreign key to the Tema model, representing the topic associated.
     """
 
     titulo = models.CharField(max_length=255)
@@ -45,7 +44,6 @@ class Apunte(models.Model):
     descripcion = models.TextField(default="")
     visualizaciones = models.IntegerField(default=0)
     visible = models.BooleanField(default=False)
-    tema = models.ForeignKey(Tema, on_delete=models.SET_NULL, null=True)
 
 class Ejercicios(models.Model):
     """
@@ -57,8 +55,6 @@ class Ejercicios(models.Model):
             Automatically set to the current date and time when created.
         asignatura (ForeignKey): A foreign key linking the exercise to an Asignatura instance.
             Allows null values and sets the field to NULL if the related Asignatura is deleted.
-        tema (ForeignKey): A foreign key linking the exercise to a Tema instance.
-            Allows null values and sets the field to NULL if the related Tema is deleted.
         visualizaciones (IntegerField): The number of times the exercise has been viewed.
             Defaults to 0.
         visible (BooleanField): A flag indicating whether the exercise is visible to users.
@@ -70,7 +66,6 @@ class Ejercicios(models.Model):
     enunciado = models.TextField()
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     asignatura = models.ForeignKey(Asignatura, on_delete=models.SET_NULL, null=True)
-    tema =  models.ForeignKey(Tema, on_delete=models.SET_NULL, null=True)
     visualizaciones = models.IntegerField(default=0)
     visible = models.BooleanField(default=False)
     user = models.ForeignKey(UsrDa, on_delete=models.CASCADE)

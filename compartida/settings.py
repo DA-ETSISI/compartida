@@ -90,6 +90,7 @@ LOGOUT_REDIRECT_URL = '/'
 
 ROOT_URLCONF = "compartida.urls"
 
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",

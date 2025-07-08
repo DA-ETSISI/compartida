@@ -3,9 +3,8 @@ This module defines the models for a Django application that manages academic su
 degrees, users, and professors. It includes the following models:
 
 Models:
-    Asignatura: Represents an academic subject with attributes for name, credits, and semester.
-    Tema: Represents a topic associated with a specific subject.
     Titulacion: Represents an academic degree or program with associated subjects and credits.
+    Asignatura: Represents an academic subject with attributes for name, credits, and semester.
     UsrDa: Represents a user in the system with extended attributes and permissions.
     Profesor: Represents a professor with assigned subjects.
 
@@ -18,33 +17,6 @@ and user roles within the system.
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.db import models
 
-class Asignatura(models.Model):
-    """
-    Model representing an academic subject.
-
-    Attributes:
-        nombre (CharField): The name of the subject, with a maximum length of 255 characters.
-        creditos (IntegerField): The number of credits assigned to the subject.
-        semestre (IntegerField): The semester in which the subject is offered.
-    """
-
-    nombre = models.CharField(max_length=255)
-    creditos = models.IntegerField(default=6)
-    semestre = models.IntegerField(default=0)
-
-class Tema(models.Model):
-    """
-    Represents a topic (Tema) associated with a specific subject (Asignatura).
-
-    Attributes:
-        nombre (CharField): The name of the topic, limited to 255 characters.
-        asignatura (ForeignKey): A foreign key linking the topic to an instance of the 
-            Asignatura model. Deleting the associated Asignatura will cascade and 
-            delete the related Tema instances.
-    """
-
-    nombre = models.CharField(max_length=255)
-    asignatura = models.ForeignKey(Asignatura, on_delete=models.CASCADE)
 
 class Titulacion(models.Model):
     """
@@ -52,14 +24,33 @@ class Titulacion(models.Model):
 
     Attributes:
         nombre (CharFiled): The name of the degree.
-        asignaturas (ManyToManyField): A many-to-many relationship with the Asignatura model, 
-            representing the subjects associated with the degree. This field is optional.
-        creditos (IntegerField): The total number of credits required for the degree.
+        codigo (CharField): A unique code for the degree, limited to 10 characters.
     """
 
     nombre = models.CharField(max_length=255)
-    asignaturas = models.ManyToManyField(Asignatura, blank=True)
-    creditos = models.IntegerField(default=270)
+    codigo = models.CharField(max_length=10, default="", unique=True)
+
+class Asignatura(models.Model):
+    """
+    Model representing an academic subject.
+
+    Attributes:
+        nombre (CharField): The name of the subject, with a maximum length of 255 characters.
+        creditos (IntegerField): The number of credits assigned to the subject.
+        curso (IntegerField): The course number in which the subject is taught.
+        optativa (BooleanField): Indicates whether the subject is optional (True) or mandatory (
+            False). Defaults to False.
+        grados (ManyToManyField): A many-to-many relationship with the Titulacion model, 
+            representing the degrees associated with the subject. This field is required.
+    """
+    codigo = models.CharField(max_length=20, primary_key=True, unique=True, default="")
+
+    nombre = models.CharField(max_length=255)
+    creditos = models.IntegerField(default=6)
+    curso = models.IntegerField(default=0)
+    optativa = models.BooleanField(default=False)
+
+    grados =  models.ManyToManyField('Titulacion', symmetrical=False, blank=False)
 
 class UsrDaManager(BaseUserManager):
     """
