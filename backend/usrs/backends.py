@@ -102,6 +102,7 @@ class keycloakOIDCAuthenticationBackend(OIDCAuthenticationBackend):
         return user
 
     def update_user(self, user, claims):
+        # TODO actualizar la documentación
         """
         Updates the attributes of a user instance based on the provided claims.
 

@@ -43,11 +43,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
+    "rest_framework",
+    "mozilla_django_oidc",
+
     "apuntes.apps.ApuntesConfig",
     "usrs.apps.UsrsConfig",
-
-    "mozilla_django_oidc"
-
 ]
 
 
