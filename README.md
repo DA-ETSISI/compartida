@@ -29,6 +29,8 @@ KC_REALM={Realm usado por Keycloak}
 KC_HOST={Host de Keycloak}
 KC_ALGO={Algoritmo usado por Keycloak}
 CODIGO_DE_ESCUELA={Código de tu escuela, 61 en caso de la ETSISI}
+API_URL= {Url a la upm api para obtener las titulaciones y las asignaturas} 
+API_ANYO= (Año del que obtener la información de la api Pej: 202526)
 ```
 
 Aplica las migraciones de la base de datos.
