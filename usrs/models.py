@@ -29,6 +29,7 @@ class Titulacion(models.Model):
 
     nombre = models.CharField(max_length=255)
     codigo = models.CharField(max_length=10, default="", unique=True)
+    tipo = models.CharField(max_length=10, default="GRA", blank=True)
 
 class Asignatura(models.Model):
     """

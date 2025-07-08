@@ -19,12 +19,13 @@ class Command(BaseCommand):
             escula_plan = data_plan.get('datos', {}).get(config('CODIGO_DE_ESCUELA'), [])
 
             for plan in escula_plan:
-                if plan.get("subtipo_estudio") == "GRA":
+                if plan.get("subtipo_estudio") == "GRA" or plan.get("subtipo_estudio") == "MOF":
                     
                     Titulacion.objects.get_or_create(
                         codigo=plan.get("codigo"),
                         defaults={
                             "nombre": plan.get("nombre"),
+                            "tipo": plan.get("subtipo_estudio", "GRA")
                         }
                     )
         
