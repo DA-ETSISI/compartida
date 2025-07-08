@@ -20,7 +20,6 @@ class Command(BaseCommand):
 
             for plan in escula_plan:
                 if plan.get("subtipo_estudio") == "GRA":
-                    print(f"Cargando titulacion: {plan.get('nombre')} ({plan.get('codigo')})")
                     
                     Titulacion.objects.get_or_create(
                         codigo=plan.get("codigo"),
@@ -37,7 +36,7 @@ class Command(BaseCommand):
         for titulo in titulaciones:
             asignaturas_url = f"{config('API_URL')}/{config('API_ANYO')}/{titulo.codigo}_asignaturas_v2.json"
             resp = requests.get(asignaturas_url)
-            print(resp)
+            
             if resp.status_code == 200:
                 data_asignaturas = resp.json()
                 asignaturas_plan = data_asignaturas.get("datos", {})
