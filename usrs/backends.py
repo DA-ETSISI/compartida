@@ -61,24 +61,27 @@ class keycloakOIDCAuthenticationBackend(OIDCAuthenticationBackend):
             Additional user-related data is stored in the `UsrDa` model.
             If the user are PDI create a Profesor instance.
         """
+
         # Extract the necessary information from the claims
-        preferred_username = claims.get('uid')
-        email = claims.get('upmMailMainAddress')
-        given_name = claims.get('givenName')
-        name = claims.get('displayName')
-        codigo_de_escuela = claims.get('upmCentre')
+        print(claims)
+
+        username = claims.get('preferred_username')
+        email = claims.get('email')
+        given_name = claims.get('given_name')
+        name = claims.get('name')        
+        codigos_de_escuela = claims.get('upmCentre')
         tipo_usuario = claims.get('employeeType')
 
         es_escuela= False
-        for code in codigo_de_escuela:
+        for code in codigos_de_escuela:
             if code == config('CODIGO_DE_ESCUELA'):
                 es_escuela = True
 
         if not es_escuela:
             raise PermissionDenied("No tienes permiso para acceder a esta aplicación")
 
-        if UsrDa.objects.filter(preferred_username=preferred_username).exists():
-            return UsrDa.objects.get(preferred_username=preferred_username)
+        if UsrDa.objects.filter(preferred_username=username).exists():
+            return UsrDa.objects.get(preferred_username=username)
 
         es_profesor = False
         for tipo in tipo_usuario:
@@ -86,12 +89,12 @@ class keycloakOIDCAuthenticationBackend(OIDCAuthenticationBackend):
                 es_profesor = True
 
         user = UsrDa.objects.create_user(
-            preferred_username=preferred_username,
+            preferred_username=username,
             email=email,
             name=name,
             given_name=given_name,
-            codigo_de_escuela=codigo_de_escuela,
             tipo_usuario=tipo_usuario,
+            codigos_escuela=codigos_de_escuela,
             es_profesor=es_profesor,
         )
 
