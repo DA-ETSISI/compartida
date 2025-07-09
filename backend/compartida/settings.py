@@ -84,7 +84,7 @@ OIDC_RP_SCOPES = 'openid profile'
 
 OIDC_RP_SIGN_ALGO = config('KC_ALGO')
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/usr/login/callback/'
 LOGOUT_REDIRECT_URL = '/'
 
 

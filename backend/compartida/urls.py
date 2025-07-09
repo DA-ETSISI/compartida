@@ -14,15 +14,11 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.conf.urls.static import static
+
 from django.urls import path, include
-from django.conf import settings
+from mozilla_django_oidc.views import OIDCAuthenticationRequestView, OIDCAuthenticationCallbackView
 
 
 urlpatterns = [
-    path("usr/", include('usrs.urls')),
-    path("", include('apuntes.urls')),
-
+    path('usr/', include('usrs.urls')),  # <-- Tu API REST vive aquí
 ]
-
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

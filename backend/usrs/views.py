@@ -1,132 +1,24 @@
-"""
-Module: usrs.views
-This module contains views for user authentication and management.
-It includes a logout view that allows users to log out of the application.
-"""
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.shortcuts import redirect
-from django.http import HttpResponse
-from django.template import loader
+from rest_framework.permissions import IsAuthenticated #type: ignore[import]
+from rest_framework import viewsets #type: ignore[import]
+from rest_framework.decorators import api_view, permission_classes #type: ignore[import]
+from rest_framework.response import Response #type: ignore[import]
+from .serializers import UsrDaSerializer
 
-from .models import UsrDa
-
-# Create your views here.
-@login_required
-def logout(request):
-    """
-    Logout the user and redirect to the home page.
-    This view is protected by the login_required decorator, which means
-    that only authenticated users can access it. If a user is not authenticated,
-    they will be redirected to the login page.
-    The view uses the request.user.logout() method to log out the user,
-    and then redirects them to the home page.
-
-    Args:
-        request (HttpRequest): The HTTP request object containing the session data.
-
-    Returns:
-        HttpResponseRedirect: A redirect to the home page after logging out.
-    """
-
-    request.session.flush()  # Clear the session data
-
-    return redirect('/')
+from usrs.models import UsrDa
 
 
-@user_passes_test(lambda u: u.is_staff)
-def lista_usuarios(request):
-    """
-    View to list all users in the system.
-    This view is protected by the user_passes_test decorator, which means
-    that only users with staff status can access it. If a user does not have
-    staff status, they will be redirected to the login page.
+@api_view(['GET'])
+def current_user(request):
+    user = request.user
 
-    Args:
-        request (HttpRequest): The HTTP request object containing the session data.
+    if not user.is_authenticated:
+        return Response({'error': 'User not authenticated'}, status=401)
 
-    Returns:
-        HttpResponse: A response containing the list of users.
-    """
-    doc_template = loader.get_template('staff/lista_users.html')
-
-    try:
-        user = UsrDa.objects.get(id=request.user.id)
-    except UsrDa.DoesNotExist:
-        user = None
-
-    ctx = {
-        "user": request.user.is_authenticated,
-        "user_data": user,
-        'usuarios': UsrDa.objects.all(),
+    data = {
+        'id': user.id,
+        'username': user.preferred_username,
+        'email': user.email,
+        'is_staff': user.is_staff,
+        # otros campos que quieras exponer
     }
-
-    doc = doc_template.render(ctx, request)
-
-    return HttpResponse(doc)
-
-@user_passes_test(lambda u: u.is_staff)
-def editat_usuario(request, user_id):
-    """
-    View to edit a user in the system.
-    This view is protected by the user_passes_test decorator, which meansx
-    that only users with staff status can access it. If a user does not have 
-    staff status, they will be redirected to the login page.
-
-    Args:
-        request (HttpRequest): The HTTP request object containing the session data.
-        id (int): The ID of the user to be edited.
-
-    Returns:
-        HttpResponse: A response containing the edit user form.
-    """
-    doc_template = loader.get_template('staff/editar_users.html')
-
-    if request.method == 'POST':
-        user = UsrDa.objects.get(id=user_id)
-        user.is_staff = 'staff' in request.POST
-
-        user.save()
-
-    try:
-        user = UsrDa.objects.get(id=request.user.id)
-    except UsrDa.DoesNotExist:
-        user = None
-
-    ctx = {
-        "user": request.user.is_authenticated,
-        "user_data": user,
-        'usuario': UsrDa.objects.get(id=user_id),
-    }
-
-    doc = doc_template.render(ctx, request)
-
-    return HttpResponse(doc)
-
-def user_self(request):
-    """
-    View to get the current user's information.
-    This view is protected by the login_required decorator, which means
-    that only authenticated users can access it. If a user is not authenticated,
-    they will be redirected to the login page.
-
-    Args:
-        request (HttpRequest): The HTTP request object containing the session data.
-
-    Returns:
-        HttpResponse: A response containing the current user's information.
-    """
-    doc_template = loader.get_template('apuntes/self_user.html')
-
-    try:
-        user = UsrDa.objects.get(id=request.user.id)
-    except UsrDa.DoesNotExist:
-        user = None
-
-    ctx = {
-        "user": request.user.is_authenticated,
-        "user_data": user,
-    }
-
-    doc = doc_template.render(ctx, request)
-
-    return HttpResponse(doc)
+    return Response(data)

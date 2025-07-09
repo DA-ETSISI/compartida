@@ -14,18 +14,16 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from mozilla_django_oidc import views as oidc_views
-from django.urls import path
 
-from .views import lista_usuarios, editat_usuario, user_self
+from django.urls import path
+from .views import current_user
+from mozilla_django_oidc import views as oidc_views
 
 urlpatterns = [
+    path('user/', current_user, name='current-user'),
     path('login/', oidc_views.OIDCAuthenticationRequestView.as_view(),
          name='oidc_authentication_init'),
     path('login/callback/', oidc_views.OIDCAuthenticationCallbackView.as_view(),
           name='oidc_authentication_callback'),
     path('logout/', oidc_views.OIDCLogoutView.as_view(), name='oidc_logout'),
-    path('usuarios/', lista_usuarios, name='lista_usuarios'),
-    path('usuarios/edit/<int:user_id>/', editat_usuario, name='editar_usuario'),
-    path('self/', user_self, name='user_self'),
 ]
