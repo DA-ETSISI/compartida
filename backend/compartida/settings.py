@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
     "rest_framework",
     "mozilla_django_oidc",
+    "storages",
 
     "apuntes.apps.ApuntesConfig",
     "usrs.apps.UsrsConfig",
@@ -61,6 +62,7 @@ MIDDLEWARE = [
     
 ]
 
+#keyCloack settings
 AUTHENTICATION_BACKENDS = [
     'usrs.backends.keycloakOIDCAuthenticationBackend',
     'django.contrib.auth.backends.ModelBackend',
@@ -86,6 +88,18 @@ OIDC_RP_SIGN_ALGO = config('KC_ALGO')
 
 LOGIN_REDIRECT_URL = '/usr/login/callback/'
 LOGOUT_REDIRECT_URL = '/'
+
+# Minio settings
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+AWS_ACCESS_KEY_ID = config('MINIO_ACCESS_KEY')
+AWS_SECRET_ACCESS_KEY = config('MINIO_SECRET_KEY')
+AWS_STORAGE_BUCKET_NAME = config('MINIO_BUCKET_NAME')
+AWS_S3_ENDPOINT_URL = config('MINIO_ENDPOINT_URL')
+AWS_S3_SSL = False  # Cambia a True si tu MinIO usa SSL
+AWS_S3_VERIFY = False
+AWS_S3_ADDRESSING_STYLE = "path" 
+
 
 
 ROOT_URLCONF = "compartida.urls"
