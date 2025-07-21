@@ -18,9 +18,6 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -90,15 +87,30 @@ LOGIN_REDIRECT_URL = '/usr/login/callback/'
 LOGOUT_REDIRECT_URL = '/'
 
 # Minio settings
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-AWS_ACCESS_KEY_ID = config('MINIO_ACCESS_KEY')
-AWS_SECRET_ACCESS_KEY = config('MINIO_SECRET_KEY')
-AWS_STORAGE_BUCKET_NAME = config('MINIO_BUCKET_NAME')
-AWS_S3_ENDPOINT_URL = config('MINIO_ENDPOINT_URL')
-AWS_S3_SSL = False  # Cambia a True si tu MinIO usa SSL
-AWS_S3_VERIFY = False
-AWS_S3_ADDRESSING_STYLE = "path" 
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "OPTIONS": {
+            "access_key": config('MINIO_ACCESS_KEY'),
+            "secret_key": config('MINIO_SECRET_KEY'),
+            "bucket_name": config('MINIO_BUCKET_NAME'),
+            "endpoint_url": config('MINIO_ENDPOINT_URL'),
+            "region_name": config('MINIO_REGION', default="us-east-1"),
+            "addressing_style": "path",
+            "use_ssl": False,
+            "verify": False,
+            "object_parameters": {
+                "ACL": "private",
+            },
+            # Parámetro para que boto3 genere URLs pre-firmadas con expiración personalizada
+            "querystring_auth": True,
+            "querystring_expire": 120,  # 2 minutos en segundos
+        },
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
 
 
 

@@ -12,6 +12,7 @@ Models:
 from django.db import models
 from usrs.models import Asignatura, UsrDa, Profesor
 
+
 class Apunte(models.Model):
     """
     Apunte Model
@@ -40,10 +41,13 @@ class Apunte(models.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     asignatura = models.ForeignKey(Asignatura, on_delete=models.SET_NULL, null=True)
     user = models.ForeignKey(UsrDa, on_delete=models.CASCADE)
-    apoyo_docente = models.ManyToManyField(Profesor)
+    apoyo_docente = models.ManyToManyField(Profesor, blank=True, null=True)
     descripcion = models.TextField(default="")
     visualizaciones = models.IntegerField(default=0)
     visible = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.titulo
 
 class Ejercicios(models.Model):
     """
