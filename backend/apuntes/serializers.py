@@ -14,4 +14,4 @@ class GetApunteSerializer(serializers.ModelSerializer):
 class ListApunteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Apunte
-        fields = ['id', 'titulo', 'descripcion', 'fecha_creacion', 'autor', 'visualizaciones', 'apoyo_docente', 'visible']
+        fields = ['id', 'titulo', 'fecha_creacion', 'user', 'visualizaciones', 'apoyo_docente', 'visible']
