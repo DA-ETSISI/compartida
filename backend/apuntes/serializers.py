@@ -15,3 +15,8 @@ class ListApunteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Apunte
         fields = ['id', 'titulo', 'asignatura', 'fecha_creacion', 'user', 'visualizaciones', 'apoyo_docente', 'visible']
+
+class VisibilitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Apunte
+        fields = ['visible']

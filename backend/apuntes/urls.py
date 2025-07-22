@@ -9,7 +9,7 @@ from .views import *
 
 router = DefaultRouter()
 router.register(r'load', ApunteCreateViewSet, basename='subir-apuntes')
-router.register(r'get', ApunteRetrieveViewSet, basename='get-apuntes')
+router.register(r'apunte', ApunteRetrieveViewSet, basename='get-apuntes')
 router.register(r'list', ApunteListViewSet, basename='list-apuntes')
 
 
