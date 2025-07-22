@@ -41,7 +41,7 @@ class Apunte(models.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     asignatura = models.ForeignKey(Asignatura, on_delete=models.SET_NULL, null=True)
     user = models.ForeignKey(UsrDa, on_delete=models.CASCADE)
-    apoyo_docente = models.ManyToManyField(Profesor, blank=True, null=True)
+    apoyo_docente = models.ManyToManyField(Profesor)
     descripcion = models.TextField(default="")
     visualizaciones = models.IntegerField(default=0)
     visible = models.BooleanField(default=False)

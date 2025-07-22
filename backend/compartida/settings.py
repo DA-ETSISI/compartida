@@ -43,11 +43,17 @@ INSTALLED_APPS = [
     "rest_framework",
     "mozilla_django_oidc",
     "storages",
+    'drf_spectacular',
+    'drf_spectacular_sidecar',
+    'django_extensions',
 
     "apuntes.apps.ApuntesConfig",
     "usrs.apps.UsrsConfig",
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -58,6 +64,26 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     
 ]
+
+# secure
+SECURE_SSL_REDIRECT = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+SECURE_HSTS_SECONDS = 300  # 5 minutos
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True  # Solo si vas a inscribirte en preload list
+
+X_FRAME_OPTIONS = 'DENY'
+
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = True
+
 
 #keyCloack settings
 AUTHENTICATION_BACKENDS = [
@@ -86,6 +112,17 @@ OIDC_RP_SIGN_ALGO = config('KC_ALGO')
 LOGIN_REDIRECT_URL = '/usr/login/callback/'
 LOGOUT_REDIRECT_URL = '/'
 
+#CAMBIAR EN PRODUCCIÓN
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:9000",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+
+
 # Minio settings
 STORAGES = {
     "default": {
@@ -104,7 +141,7 @@ STORAGES = {
             },
             # Parámetro para que boto3 genere URLs pre-firmadas con expiración personalizada
             "querystring_auth": True,
-            "querystring_expire": 120,  # 2 minutos en segundos
+            "querystring_expire": 60,  # 1 minuto en segundos
         },
     },
     "staticfiles": {
@@ -197,9 +234,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
+STATICFILES_DIRS = []
 
 
 # Default primary key field type
