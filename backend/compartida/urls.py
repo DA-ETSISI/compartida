@@ -1,5 +1,4 @@
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
-#from drf_spectacular_sidecar.views import 
 from django.urls import path, include
 from django.contrib import admin
 

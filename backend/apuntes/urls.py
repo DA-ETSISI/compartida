@@ -5,10 +5,11 @@ It includes routes for listing, creating, retrieving, updating, and deleting stu
 """
 
 from rest_framework.routers import DefaultRouter
-from .views import LoadApunteViewSet
+from .views import *
 
 router = DefaultRouter()
-router.register(r'load', LoadApunteViewSet, basename='apuntes')
+router.register(r'load', ApunteCreateViewSet, basename='subir-apuntes')
+router.register(r'get', ApunteRetrieveViewSet, basename='get-apuntes')
 
 
 urlpatterns = router.urls
