@@ -1,24 +1,51 @@
-from rest_framework.permissions import IsAuthenticated #type: ignore[import]
-from rest_framework import viewsets #type: ignore[import]
-from rest_framework.decorators import api_view, permission_classes #type: ignore[import]
-from rest_framework.response import Response #type: ignore[import]
-from .serializers import UsrDaSerializer
+from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, ListModelMixin
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from rest_framework import permissions, status
 
-from usrs.models import UsrDa
+from .serializers import *
+from .models import UsrDa
+
+class UserDAListViewSet(ListModelMixin, GenericViewSet):
+    permissions_classes = [permissions.IsAuthenticated]
+    
+    serializer_class = GenericUserDASerializer
+    
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['preferred_username', 'email', 'is_staff']
 
 
-@api_view(['GET'])
-def current_user(request):
-    user = request.user
+    def list(self, request, *args, **kwargs):
+        if not request.user.is_staff:
+            return Response({"detail": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            return super().list(request, *args, **kwargs)
 
-    if not user.is_authenticated:
-        return Response({'error': 'User not authenticated'}, status=401)
+    def get_queryset(self):
+        user = self.request.user
+        if not user.is_staff:
+            return UsrDa.objects.none()
+        return UsrDa.objects.all()
 
-    data = {
-        'id': user.id,
-        'username': user.preferred_username,
-        'email': user.email,
-        'is_staff': user.is_staff,
-        # otros campos que quieras exponer
-    }
-    return Response(data)
+
+class UserDARetrieveViewSet(RetrieveModelMixin, GenericViewSet):
+    permissions_classes = [permissions.IsAuthenticated]
+    
+    serializer_class = GenericUserDASerializer
+    lookup_field = 'id'
+
+
+    def retrieve(self, request, *args, **kwargs):
+        if not request.user.is_staff:
+            return Response({"detail": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            return super().retrieve(request, *args, **kwargs)
+
+    def get_queryset(self):
+        if not self.request.user.is_staff:
+            return UsrDa.objects.none()
+        return UsrDa.objects.all()
+

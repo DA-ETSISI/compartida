@@ -4,8 +4,8 @@ from django.contrib import admin
 
 urlpatterns = [
     path('apuntes/', include('apuntes.urls')),
-    #path('usrs/', include('usrs.urls')),
-    path('usr/login/', include('mozilla_django_oidc.urls')),
+    path('usrs/', include('usrs.urls')),
+    path('usrs/login/', include('mozilla_django_oidc.urls')),
     # Swagger, auth, etc.
     path('schema/', SpectacularAPIView.as_view(), name='schema'),
     path('docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),

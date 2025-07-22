@@ -24,6 +24,11 @@ class ApunteCreateViewSet(CreateModelMixin, GenericViewSet):
         """
         Override to set the user when creating a new Apunte instance.
         """
+        user = self.request.user
+
+        user.recuento_subidas += 1
+        user.save()
+
         serializer.save(user=self.request.user)
 
 class ApunteRetrieveViewSet(RetrieveModelMixin, GenericViewSet):
@@ -51,8 +56,12 @@ class ApunteRetrieveViewSet(RetrieveModelMixin, GenericViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
+        user = self.request.user
 
+        user.recuento_visualizaciones += 1
         instance.visualizaciones += 1
+        
+        user.save()
         instance.save()
 
         serializer = self.get_serializer(instance)
