@@ -64,7 +64,7 @@ class ApunteRetrieveViewSet(RetrieveModelMixin, GenericViewSet):
         responses={200: VisibilitySerializer},
         description="Cambiar la visibilidad de un apunte"
     )
-    def set_visibility(self, request, pk=None):
+    def set_visibility(self, request, id=None):
         if not request.user.is_staff:
             return Response({"detail": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
 
