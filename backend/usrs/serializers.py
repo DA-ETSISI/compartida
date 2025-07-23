@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from usrs.models import UsrDa, Profesor, Asignatura, Titulacion
+from usrs.models import UsrDa
 
 class GenericUserDASerializer(serializers.ModelSerializer):    
     class Meta:

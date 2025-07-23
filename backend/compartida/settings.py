@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 
     "apuntes.apps.ApuntesConfig",
     "usrs.apps.UsrsConfig",
+    "titulaciones.apps.TitulacionesConfig"
 ]
 
 REST_FRAMEWORK = {

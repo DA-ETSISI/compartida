@@ -10,7 +10,8 @@ Models:
         creation date, associated subject, associated topic, view count, and uploader.
 """
 from django.db import models
-from usrs.models import Asignatura, UsrDa, Profesor
+from usrs.models import UsrDa, Profesor
+from titulaciones.models import Titulacion, Asignatura
 
 
 class Apunte(models.Model):
