@@ -1,10 +1,11 @@
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, ListModelMixin
 from drf_spectacular.utils import extend_schema, OpenApiParameter
-from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from rest_framework.viewsets import ModelViewSet, GenericViewSet, ViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import permissions, status
+from django.http import Http404
 
 from .serializers import *
 from .models import UsrDa
@@ -93,3 +94,31 @@ class UserDARetrieveViewSet(RetrieveModelMixin, GenericViewSet):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+class CurrentUserViewSet(ViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+
+    serializer_class = CurrentUserSerializer
+    titulacion_serializer_class = TitulacionUserDASerializer
+
+
+    @extend_schema(
+        request=CurrentUserSerializer,
+        responses={200: CurrentUserSerializer},
+        description="Devuelve el usuario autenticado"
+    )
+    @action(detail=False, methods=['get'], url_path='user')
+    def current_user(self, request):
+        serializer = self.serializer_class(request.user)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=["patch"], url_path="user/titulacion")
+    def set_titulacion(self, request):
+
+        userda = request.user
+
+        serializer = self.titulacion_serializer_class(userda, data = request.data, partial = True)
+
+        serializer.is_valid(raise_exception = True)
+        serializer.save()
+
+        return Response(serializer.data, status=200)

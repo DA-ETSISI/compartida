@@ -26,3 +26,20 @@ class ActiveUserDASerializer(serializers.ModelSerializer):
     class Meta:
         model = UsrDa
         fields = ['is_active']
+
+class CurrentUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UsrDa
+        fields = [
+                    'id',
+                    'preferred_username',
+                    'email',
+                    'name',
+                    'es_profesor',
+                    'titulacion'
+        ]
+
+class TitulacionUserDASerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UsrDa
+        fields = ['titulacion']
