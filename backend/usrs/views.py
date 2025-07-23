@@ -35,6 +35,9 @@ class UserDARetrieveViewSet(RetrieveModelMixin, GenericViewSet):
     permissions_classes = [permissions.IsAuthenticated]
     
     serializer_class = GenericUserDASerializer
+    staff_serializer_class = StaffUserDASerializer
+    active_serializer_class = ActiveUserDASerializer
+
     lookup_field = 'id'
 
 
@@ -48,4 +51,45 @@ class UserDARetrieveViewSet(RetrieveModelMixin, GenericViewSet):
         if not self.request.user.is_staff:
             return UsrDa.objects.none()
         return UsrDa.objects.all()
+
+    def get_serializer_class(self):
+        if self.action == 'set_staff':
+            return self.staff_serializer_class
+        elif self.action == 'set_active':
+            return self.active_serializer_class
+        return super().get_serializer_class()
+
+    @action(detail=True, methods=["patch"], url_path="staff")
+    @extend_schema(
+        responses={200: StaffUserDASerializer},
+        description="Cambiar la visibilidad de un apunte"
+    )
+    def set_staff(self, request, id = None):
+        if not request.user.is_staff:
+            return Response({"detail": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+
+        userda = self.get_object()
+        serializer = self.get_serializer(userda, data = request.data, partial=True)
+        
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(detail=True, methods=["patch"], url_path="active")
+    @extend_schema(
+        responses={200: StaffUserDASerializer},
+        description="Cambiar la visibilidad de un apunte"
+    )
+    def set_active(self, request, id = None):
+        if not request.user.is_staff:
+            return Response({"detail": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+
+        userda = self.get_object()
+        serializer = self.get_serializer(userda, data = request.data, partial=True)
+        
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
