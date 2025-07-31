@@ -10,3 +10,7 @@ django-filter
 Werkzeug
 django-extensions
 pyOpenSSL
+drf_spectacular
+drf_spectacular_sidecar
+django_extensions
+Werkzeug

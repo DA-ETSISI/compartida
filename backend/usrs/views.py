@@ -1,11 +1,10 @@
-from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, ListModelMixin
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from rest_framework.viewsets import ModelViewSet, GenericViewSet, ViewSet
+from rest_framework.mixins import RetrieveModelMixin, ListModelMixin
+from drf_spectacular.utils import extend_schema
+from rest_framework.viewsets import GenericViewSet, ViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import permissions, status
-from django.http import Http404
 
 from .serializers import *
 from .models import UsrDa
@@ -16,7 +15,7 @@ class UserDAListViewSet(ListModelMixin, GenericViewSet):
     serializer_class = GenericUserDASerializer
     
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['preferred_username', 'email', 'is_staff']
+    filterset_fields = ["preferred_username", "email", "is_staff"]
 
 
     def list(self, request, *args, **kwargs):
@@ -39,7 +38,7 @@ class UserDARetrieveViewSet(RetrieveModelMixin, GenericViewSet):
     staff_serializer_class = StaffUserDASerializer
     active_serializer_class = ActiveUserDASerializer
 
-    lookup_field = 'id'
+    lookup_field = "id"
 
 
     def retrieve(self, request, *args, **kwargs):
@@ -54,9 +53,9 @@ class UserDARetrieveViewSet(RetrieveModelMixin, GenericViewSet):
         return UsrDa.objects.all()
 
     def get_serializer_class(self):
-        if self.action == 'set_staff':
+        if self.action == "set_staff":
             return self.staff_serializer_class
-        elif self.action == 'set_active':
+        elif self.action == "set_active":
             return self.active_serializer_class
         return super().get_serializer_class()
 
@@ -106,7 +105,7 @@ class CurrentUserViewSet(ViewSet):
         responses={200: CurrentUserSerializer},
         description="Devuelve el usuario autenticado"
     )
-    @action(detail=False, methods=['get'], url_path='user')
+    @action(detail=False, methods=['get'], url_path="user")
     def current_user(self, request):
         serializer = self.serializer_class(request.user)
         return Response(serializer.data)

@@ -34,4 +34,4 @@ class Asignatura(models.Model):
     curso = models.IntegerField(default=0)
     optativa = models.BooleanField(default=False)
 
-    grados =  models.ManyToManyField('Titulacion', symmetrical=False, blank=False)
+    grados =  models.ManyToManyField(Titulacion, symmetrical=False, blank=False)

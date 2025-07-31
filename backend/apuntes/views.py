@@ -1,6 +1,6 @@
-from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, ListModelMixin
+from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, ListModelMixin, DestroyModelMixin
 from drf_spectacular.utils import extend_schema, OpenApiParameter
-from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from rest_framework.viewsets import GenericViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -44,10 +44,16 @@ class ApunteRetrieveViewSet(RetrieveModelMixin, GenericViewSet):
     lookup_field = 'id'
 
     def get_queryset(self):
-        user = self.request.user
-        if user.is_staff:
-            return Apunte.objects.all()
-        return Apunte.objects.filter(visible=True)
+        if self.action == 'delete_apunte':
+            if self.request.user.is_staff:
+                return Apunte.objects.all()
+            else:
+                return Apunte.objects.filter(user=self.request.user)
+        else:
+                user = self.request.user
+                if user.is_staff:
+                    return Apunte.objects.all()
+                return Apunte.objects.filter(visible=True)
 
     def get_serializer_class(self):
         if self.action == 'set_visibility':
@@ -84,6 +90,14 @@ class ApunteRetrieveViewSet(RetrieveModelMixin, GenericViewSet):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @action(detail=True, methods=["delete"], url_path="delete")
+    def delete_apunte(self, request, id=None):
+        apunte = self.get_object()
+
+        apunte.pdfdir.delete(save=False)
+        apunte.delete()
+        return Response(status=status.HTTP_200_OK)
+
 @extend_schema(
     operation_id="List Apuntes",
     description="Retrieve apuntes filtered by visible, user, fecha, etc.",
@@ -109,4 +123,7 @@ class ApunteListViewSet(ListModelMixin, GenericViewSet):
     filterset_fields = ['titulo', 'asignatura', 'user']
 
     def get_queryset(self):
-        return Apunte.objects.filter(visible=True).order_by('-visualizaciones', '-fecha_creacion')
+        if self.request.user.is_staff:
+            return Apunte.objects.order_by('-fecha_creacion')
+        else:
+            return Apunte.objects.filter(visible=True).order_by('-visualizaciones', '-fecha_creacion')

@@ -5,6 +5,8 @@ from django.contrib import admin
 urlpatterns = [
     path('apuntes/', include('apuntes.urls')),
     path('usrs/', include('usrs.urls')),
+    path('titulaciones/', include('titulaciones.urls')),
+    # Siu login
     path('usrs/login/', include('mozilla_django_oidc.urls')),
     # Swagger, auth, etc.
     path('schema/', SpectacularAPIView.as_view(), name='schema'),

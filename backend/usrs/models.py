@@ -137,13 +137,13 @@ class UsrDa(AbstractBaseUser, PermissionsMixin):
 
     password = models.CharField(max_length=255, blank=True, null=True)
 
-    USERNAME_FIELD = 'preferred_username'
+    USERNAME_FIELD = "preferred_username"
     REQUIRED_FIELDS = [
-                        'email',
-                        'UPMClassCode',
-                        'name',
-                        'given_name',
-                        'family_name',
+                        "email",
+                        "UPMClassCode",
+                        "name",
+                        "given_name",
+                        "family_name",
                         ]
 
     objects = UsrDaManager()
