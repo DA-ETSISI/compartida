@@ -1,22 +1,28 @@
-from rest_framework.mixins import RetrieveModelMixin, ListModelMixin
-from drf_spectacular.utils import extend_schema
-from rest_framework.viewsets import GenericViewSet, ViewSet
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.response import Response
-from rest_framework.decorators import action
+from drf_spectacular.utils import extend_schema
 from rest_framework import permissions, status
+from rest_framework.decorators import action
+from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
+from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet, ViewSet
 
-from .serializers import *
 from .models import UsrDa
+from .serializers import (
+    ActiveUserDASerializer,
+    CurrentUserSerializer,
+    GenericUserDASerializer,
+    StaffUserDASerializer,
+    TitulacionUserDASerializer,
+)
+
 
 class UserDAListViewSet(ListModelMixin, GenericViewSet):
     permissions_classes = [permissions.IsAuthenticated]
-    
+
     serializer_class = GenericUserDASerializer
-    
+
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["preferred_username", "email", "is_staff"]
-
 
     def list(self, request, *args, **kwargs):
         if not request.user.is_staff:
@@ -33,13 +39,12 @@ class UserDAListViewSet(ListModelMixin, GenericViewSet):
 
 class UserDARetrieveViewSet(RetrieveModelMixin, GenericViewSet):
     permissions_classes = [permissions.IsAuthenticated]
-    
+
     serializer_class = GenericUserDASerializer
     staff_serializer_class = StaffUserDASerializer
     active_serializer_class = ActiveUserDASerializer
 
     lookup_field = "id"
-
 
     def retrieve(self, request, *args, **kwargs):
         if not request.user.is_staff:
@@ -62,36 +67,37 @@ class UserDARetrieveViewSet(RetrieveModelMixin, GenericViewSet):
     @action(detail=True, methods=["patch"], url_path="staff")
     @extend_schema(
         responses={200: StaffUserDASerializer},
-        description="Cambiar la visibilidad de un apunte"
+        description="Cambiar la visibilidad de un apunte",
     )
-    def set_staff(self, request, id = None):
+    def set_staff(self, request, id=None):
         if not request.user.is_staff:
             return Response({"detail": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
 
         userda = self.get_object()
-        serializer = self.get_serializer(userda, data = request.data, partial=True)
-        
+        serializer = self.get_serializer(userda, data=request.data, partial=True)
+
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
     @action(detail=True, methods=["patch"], url_path="active")
     @extend_schema(
         responses={200: StaffUserDASerializer},
-        description="Cambiar la visibilidad de un apunte"
+        description="Cambiar la visibilidad de un apunte",
     )
-    def set_active(self, request, id = None):
+    def set_active(self, request, id=None):
         if not request.user.is_staff:
             return Response({"detail": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
 
         userda = self.get_object()
-        serializer = self.get_serializer(userda, data = request.data, partial=True)
-        
+        serializer = self.get_serializer(userda, data=request.data, partial=True)
+
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class CurrentUserViewSet(ViewSet):
     permission_classes = [permissions.IsAuthenticated]
@@ -99,13 +105,12 @@ class CurrentUserViewSet(ViewSet):
     serializer_class = CurrentUserSerializer
     titulacion_serializer_class = TitulacionUserDASerializer
 
-
     @extend_schema(
         request=CurrentUserSerializer,
         responses={200: CurrentUserSerializer},
-        description="Devuelve el usuario autenticado"
+        description="Devuelve el usuario autenticado",
     )
-    @action(detail=False, methods=['get'], url_path="user")
+    @action(detail=False, methods=["get"], url_path="user")
     def current_user(self, request):
         serializer = self.serializer_class(request.user)
         return Response(serializer.data)
@@ -115,9 +120,11 @@ class CurrentUserViewSet(ViewSet):
 
         userda = request.user
 
-        serializer = self.titulacion_serializer_class(userda, data = request.data, partial = True)
+        serializer = self.titulacion_serializer_class(
+            userda, data=request.data, partial=True
+        )
 
-        serializer.is_valid(raise_exception = True)
+        serializer.is_valid(raise_exception=True)
         serializer.save()
 
         return Response(serializer.data, status=200)

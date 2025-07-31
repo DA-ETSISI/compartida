@@ -11,9 +11,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-from decouple import config, Csv
 
-import os
+from decouple import Csv, config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,12 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('DJANGO_SECRET_KEY')
+SECRET_KEY = config("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG')
+DEBUG = config("DEBUG")
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv())
 
 
 # Application definition
@@ -39,25 +38,20 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     "rest_framework",
     "mozilla_django_oidc",
     "storages",
-    'drf_spectacular',
-    'drf_spectacular_sidecar',
-    'django_extensions',
-
+    "drf_spectacular",
+    "drf_spectacular_sidecar",
+    "django_extensions",
     "apuntes.apps.ApuntesConfig",
     "usrs.apps.UsrsConfig",
-    "titulaciones.apps.TitulacionesConfig"
+    "titulaciones.apps.TitulacionesConfig",
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-    
-    'DEFAULT_FILTER_BACKENDS': [
-        'django_filters.rest_framework.DjangoFilterBackend'
-    ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
 }
 
 MIDDLEWARE = [
@@ -67,12 +61,11 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    
 ]
 
 # secure
 SECURE_SSL_REDIRECT = True
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
@@ -84,40 +77,50 @@ SECURE_HSTS_SECONDS = 300  # 5 minutos
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True  # Solo si vas a inscribirte en preload list
 
-X_FRAME_OPTIONS = 'DENY'
+X_FRAME_OPTIONS = "DENY"
 
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 
 
-#keyCloack settings
+# keyCloack settings
 AUTHENTICATION_BACKENDS = [
-    'usrs.backends.keycloakOIDCAuthenticationBackend',
-    'django.contrib.auth.backends.ModelBackend',
+    "usrs.backends.keycloakOIDCAuthenticationBackend",
+    "django.contrib.auth.backends.ModelBackend",
     # ...
 ]
 
-OIDC_RP_CLIENT_ID = config('KC_CLIENT_ID')
-OIDC_RP_CLIENT_SECRET = config('KC_CLIENT_SECRET')
+OIDC_RP_CLIENT_ID = config("KC_CLIENT_ID")
+OIDC_RP_CLIENT_SECRET = config("KC_CLIENT_SECRET")
 
-KC_HOST = config('KC_HOST')
-KC_REALM = config('KC_REALM')
+KC_HOST = config("KC_HOST")
+KC_REALM = config("KC_REALM")
 
-OIDC_OP_AUTHORIZATION_ENDPOINT = f'http://{KC_HOST}/realms/{KC_REALM}/protocol/openid-connect/auth'
-OIDC_OP_TOKEN_ENDPOINT = f'http://{KC_HOST}/realms/{KC_REALM}/protocol/openid-connect/token'
-OIDC_OP_USER_ENDPOINT = f'http://{KC_HOST}/realms/{KC_REALM}/protocol/openid-connect/userinfo'
-OIDC_OP_JWKS_ENDPOINT = f'http://{KC_HOST}/realms/{KC_REALM}/protocol/openid-connect/certs'
-OIDC_OP_LOGOUT_ENDPOINT = f"http://{KC_HOST}/realms/{KC_REALM}/protocol/openid-connect/logout"
+OIDC_OP_AUTHORIZATION_ENDPOINT = (
+    f"http://{KC_HOST}/realms/{KC_REALM}/protocol/openid-connect/auth"
+)
+OIDC_OP_TOKEN_ENDPOINT = (
+    f"http://{KC_HOST}/realms/{KC_REALM}/protocol/openid-connect/token"
+)
+OIDC_OP_USER_ENDPOINT = (
+    f"http://{KC_HOST}/realms/{KC_REALM}/protocol/openid-connect/userinfo"
+)
+OIDC_OP_JWKS_ENDPOINT = (
+    f"http://{KC_HOST}/realms/{KC_REALM}/protocol/openid-connect/certs"
+)
+OIDC_OP_LOGOUT_ENDPOINT = (
+    f"http://{KC_HOST}/realms/{KC_REALM}/protocol/openid-connect/logout"
+)
 
-OIDC_RP_SCOPES = 'openid profile'
+OIDC_RP_SCOPES = "openid profile"
 
 
-OIDC_RP_SIGN_ALGO = config('KC_ALGO')
+OIDC_RP_SIGN_ALGO = config("KC_ALGO")
 
-LOGIN_REDIRECT_URL = '/usr/login/callback/'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = "/usr/login/callback/"
+LOGOUT_REDIRECT_URL = "/"
 
-#CAMBIAR EN PRODUCCIÓN
+# CAMBIAR EN PRODUCCIÓN
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:9000",
 ]
@@ -133,18 +136,17 @@ STORAGES = {
     "default": {
         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
         "OPTIONS": {
-            "access_key": config('MINIO_ACCESS_KEY'),
-            "secret_key": config('MINIO_SECRET_KEY'),
-            "bucket_name": config('MINIO_BUCKET_NAME'),
-            "endpoint_url": config('MINIO_ENDPOINT_URL'),
-            "region_name": config('MINIO_REGION', default="us-east-1"),
+            "access_key": config("MINIO_ACCESS_KEY"),
+            "secret_key": config("MINIO_SECRET_KEY"),
+            "bucket_name": config("MINIO_BUCKET_NAME"),
+            "endpoint_url": config("MINIO_ENDPOINT_URL"),
+            "region_name": config("MINIO_REGION", default="us-east-1"),
             "addressing_style": "path",
             "use_ssl": False,
             "verify": False,
             "object_parameters": {
                 "ACL": "private",
             },
-            # Parámetro para que boto3 genere URLs pre-firmadas con expiración personalizada
             "querystring_auth": True,
             "querystring_expire": 60,  # 1 minuto en segundos
         },
@@ -155,14 +157,13 @@ STORAGES = {
 }
 
 
-
 ROOT_URLCONF = "compartida.urls"
 
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / 'templates'],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -193,7 +194,7 @@ DATABASES = {
         'NAME': config('DB_NAME'),
         'USER': config('DB_USER'),
         'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),  # o el nombre del servicio si estás en Docker, por ejemplo "mariadb"
+        'HOST': config('DB_HOST'),
         'PORT': '3306',
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
@@ -201,14 +202,14 @@ DATABASES = {
     }
 }"""
 
-AUTH_USER_MODEL = 'usrs.UsrDa'
+AUTH_USER_MODEL = "usrs.UsrDa"
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",  # noqa:E501
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
