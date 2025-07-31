@@ -12,7 +12,7 @@ class LoadApunteSerializer(serializers.ModelSerializer):
 class GetApunteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Apunte
-        fields = "__all__"
+        exclude = ["pdfdir"]
 
 
 class ListApunteSerializer(serializers.ModelSerializer):

@@ -1,3 +1,4 @@
+from django.http import StreamingHttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import permissions, status
@@ -107,6 +108,21 @@ class ApunteRetrieveViewSet(RetrieveModelMixin, GenericViewSet):
         apunte.pdfdir.delete(save=False)
         apunte.delete()
         return Response(status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=["get"], url_path="download")
+    def download_apunte(self, request, id=None):
+        apunte = self.get_object()
+
+        pdf = apunte.pdfdir
+
+        file_handle = pdf.storage.open(pdf.name, "rb")
+
+        response = StreamingHttpResponse(file_handle, content_type="application/pdf")
+
+        response["Content-Disposition"] = (
+            f"attachment; " f'filename="{pdf.name.split("/")[-1]}"'
+        )
+        return response
 
 
 @extend_schema(

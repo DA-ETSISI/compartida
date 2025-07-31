@@ -1,0 +1,44 @@
+repos:
+  # Black: formateo de Python (Django)
+  - repo: https://github.com/psf/black
+    rev: 24.3.0
+    hooks:
+      - id: black
+        language_version: python3.10
+        additional_dependencies: []
+        args: ["backend/"]
+
+  # isort: orden de imports (Django)
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        args: ["backend/"]
+
+  # Flake8: linting (opcional)
+  - repo: https://github.com/pycqa/flake8
+    rev: 6.0.0
+    hooks:
+      - id: flake8
+        additional_dependencies: []
+        args: ["backend/"]
+
+  # Prettier: formateo JS/TS/JSON/HTML (React)
+ # - repo: https://github.com/pre-commit/mirrors-prettier
+  #  rev: v3.0.0
+  #  hooks:
+  #    - id: prettier
+ #       args: ["--config", "frontend/.prettierrc"]
+ #       additional_dependencies: ["prettier@3.2.5"]
+ #       files: "\\.(js|ts|jsx|tsx|json|css|scss|html)$"
+
+  # ESLint: JS/TS linting (React)
+#  - repo: local
+ #   hooks:
+ #     - id: eslint
+ #       name: eslint
+    #    entry: npm run lint
+ #       language: system
+ #       types: [javascript]
+  #      pass_filenames: false
+ #       working_directory: frontend/
