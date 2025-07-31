@@ -124,6 +124,25 @@ class ApunteRetrieveViewSet(RetrieveModelMixin, GenericViewSet):
         )
         return response
 
+    @action(detail=True, methods=["get"], url_path="view")
+    def view_apunte(self, request, id=None):
+        apunte = self.get_object()
+
+        pdf = apunte.pdfdir
+
+        apunte = self.get_object()
+
+        pdf = apunte.pdfdir
+
+        file_handle = pdf.storage.open(pdf.name, "rb")
+
+        response = StreamingHttpResponse(file_handle, content_type="application/pdf")
+
+        response["Content-Disposition"] = (
+            f'inline; filename="{pdf.name.split("/")[-1]}"'
+        )
+        return response
+
 
 @extend_schema(
     operation_id="List Apuntes",
