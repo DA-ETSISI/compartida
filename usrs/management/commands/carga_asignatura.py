@@ -58,7 +58,9 @@ class Command(BaseCommand):
                             if asignaturas_plan.get(asignatura).get("codigo_tipo_asignatura")== "O":
                                 asg[0].optativa = True
                             asg[0].save()
-                    except:
-                        print(f"Error al cargar la asignatura {asignaturas_plan.get(asignatura).get('nombre')} ({asignaturas_plan.get(asignatura).get('codigo')}) en el titulo {titulo.nombre} ({titulo.codigo})")
+                    except (KeyError, AttributeError, ValueError) as e:
+                        print(f"Error al cargar la asignatura {asignaturas_plan.get(asignatura).get('nombre')} \
+                              ({asignaturas_plan.get(asignatura).get('codigo')}) en el titulo {titulo.nombre} \
+                                ({titulo.codigo})")
                         continue
 
