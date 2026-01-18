@@ -1,7 +1,7 @@
 import requests
 from decouple import config
 from django.core.management.base import BaseCommand
-from usrs.models import Asignatura, Titulacion
+from usrs.models import Titulacion
 
 
 class Command(BaseCommand):
