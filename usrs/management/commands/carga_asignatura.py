@@ -18,7 +18,12 @@ class Command(BaseCommand):
             return
 
         if resp.status_code == 200:
-            data_plan = resp.json()
+            try:                                                                                                                                                                                                                                  
+                data_plan = resp.json()                                                                                                                                                                                                           
+            except requests.exceptions.JSONDecodeError as e:                                                                                                                                                                                      
+                print(f"Error al parsear JSON de titulaciones: {e}")                                                                                                                                                                              
+                return                                                                                                                                                                                                                            
+                                    
             escula_plan = data_plan.get("datos", {}).get(
                 config("CODIGO_DE_ESCUELA"), []
             )
@@ -54,7 +59,12 @@ class Command(BaseCommand):
                 continue
 
             if resp.status_code == 200:
-                data_asignaturas = resp.json()
+                try:
+                    data_asignaturas = resp.json()
+                except requests.exceptions.JSONDecodeError as e:
+                    print(f"Error al parsear JSON de asignaturas para {titulo.nombre}: {e}")                                                                                                                                                          
+                    continue
+
                 asignaturas_plan = data_asignaturas.get("datos", {})
 
                 for asignatura in asignaturas_plan:
