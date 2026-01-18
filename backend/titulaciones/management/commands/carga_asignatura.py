@@ -1,11 +1,7 @@
 import requests
 from decouple import config
 from django.core.management.base import BaseCommand
-<<<<<<< HEAD:usrs/management/commands/carga_asignatura.py
 from usrs.models import Titulacion
-=======
-from usrs.models import Asignatura, Titulacion
->>>>>>> refactor/split-backend-frontend:backend/titulaciones/management/commands/carga_asignatura.py
 
 
 class Command(BaseCommand):
@@ -22,16 +18,12 @@ class Command(BaseCommand):
             return
 
         if resp.status_code == 200:
-<<<<<<< HEAD:usrs/management/commands/carga_asignatura.py
             try:                                                                                                                                                                                                                                  
                 data_plan = resp.json()                                                                                                                                                                                                           
             except requests.exceptions.JSONDecodeError as e:                                                                                                                                                                                      
                 print(f"Error al parsear JSON de titulaciones: {e}")                                                                                                                                                                              
                 return                                                                                                                                                                                                                            
                                     
-=======
-            data_plan = resp.json()
->>>>>>> refactor/split-backend-frontend:backend/titulaciones/management/commands/carga_asignatura.py
             escula_plan = data_plan.get("datos", {}).get(
                 config("CODIGO_DE_ESCUELA"), []
             )
@@ -60,15 +52,11 @@ class Command(BaseCommand):
                 f"{config('API_URL')}/{config('API_ANYO')}/"
                 f"{titulo.codigo}_asignaturas_v2.json"
             )
-<<<<<<< HEAD:usrs/management/commands/carga_asignatura.py
             try:
                 resp = requests.get(asignaturas_url, timeout=20)
             except requests.RequestException as e:
-                print(f"Error de conecion al obtener {titulo.nombre}: {e}"
+                print(f"Error de conecion al obtener {titulo.nombre}: {e}")
                 continue
-=======
-            resp = requests.get(asignaturas_url)
->>>>>>> refactor/split-backend-frontend:backend/titulaciones/management/commands/carga_asignatura.py
 
             if resp.status_code == 200:
                 try:
@@ -113,8 +101,4 @@ class Command(BaseCommand):
                             f"({asignaturas_plan.get(asignatura).get('codigo')}) en el "
                             f"titulo {titulo.nombre} ({titulo.codigo})"
                         )
-<<<<<<< HEAD:usrs/management/commands/carga_asignatura.py
                         continue
-=======
-                        continue
->>>>>>> refactor/split-backend-frontend:backend/titulaciones/management/commands/carga_asignatura.py
