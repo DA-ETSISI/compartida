@@ -11,7 +11,11 @@ class Command(BaseCommand):
 
         print("Cargando titulaciones y asignaturas desde la API UPM...")
         titulaciones_url = f"{config('API_URL')}/{config('API_ANYO')}/planes_v2.json"
-        resp = requests.get(titulaciones_url)
+        try:
+            resp = requests.get(titulaciones_url, timeout=20)
+        except requests.RequestException as e:
+            print(f"Error al obtener las titulaciones: {e}")
+            return
 
         if resp.status_code == 200:
             data_plan = resp.json()
@@ -43,7 +47,11 @@ class Command(BaseCommand):
                 f"{config('API_URL')}/{config('API_ANYO')}/"
                 f"{titulo.codigo}_asignaturas_v2.json"
             )
-            resp = requests.get(asignaturas_url, timeout=20)
+            try:
+                resp = requests.get(asignaturas_url, timeout=20)
+            except requests.RequestException as e:
+                print(f"Error de conecion al obtener {titulo.nombre}: {e}"
+                continue
 
             if resp.status_code == 200:
                 data_asignaturas = resp.json()
