@@ -3,7 +3,7 @@ from django.core.management.base import BaseCommand
 from usrs.models import Titulacion, Asignatura
 from decouple import config
 
-import json, requests
+import requests
 
 class Command(BaseCommand):
     help = 'Carga titulaciones y asignaturas desde la UPM API'
