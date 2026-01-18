@@ -1,0 +1,179 @@
+from django.http import StreamingHttpResponse
+from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import OpenApiParameter, extend_schema
+from rest_framework import permissions, status
+from rest_framework.decorators import action
+from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin
+from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
+
+from .models import Apunte
+from .serializers import (
+    GetApunteSerializer,
+    ListApunteSerializer,
+    LoadApunteSerializer,
+    VisibilitySerializer,
+)
+
+
+class ApunteCreateViewSet(CreateModelMixin, GenericViewSet):
+    """
+    ViewSet for managing Apunte instances.
+
+    Provides CRUD operations for Apunte model.
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    queryset = Apunte.objects.all()
+    serializer_class = LoadApunteSerializer
+
+    def perform_create(self, serializer):
+        """
+        Override to set the user when creating a new Apunte instance.
+        """
+        user = self.request.user
+
+        user.recuento_subidas += 1
+        user.save()
+
+        serializer.save(user=self.request.user)
+
+
+class ApunteRetrieveViewSet(RetrieveModelMixin, GenericViewSet):
+    """
+    A viewset for retrieving Apunte instances.
+    This viewset provides read-only access to Apunte objects. Access is restricted to
+        authenticated users.
+    Staff users can retrieve all Apunte instances, while non-staff users can only
+        retrieve those marked as visible.
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = GetApunteSerializer
+    visibility_serializer_class = VisibilitySerializer
+    lookup_field = "id"
+
+    def get_queryset(self):
+        if self.action == "delete_apunte":
+            if self.request.user.is_staff:
+                return Apunte.objects.all()
+            else:
+                return Apunte.objects.filter(user=self.request.user)
+        else:
+            user = self.request.user
+            if user.is_staff:
+                return Apunte.objects.all()
+            return Apunte.objects.filter(visible=True)
+
+    def get_serializer_class(self):
+        if self.action == "set_visibility":
+            return self.visibility_serializer_class
+        return super().get_serializer_class()
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        user = self.request.user
+
+        user.recuento_visualizaciones += 1
+        instance.visualizaciones += 1
+
+        user.save()
+        instance.save()
+
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=["patch"], url_path="visibility")
+    @extend_schema(
+        request=VisibilitySerializer,
+        responses={200: VisibilitySerializer},
+        description="Cambiar la visibilidad de un apunte",
+    )
+    def set_visibility(self, request, id=None):
+        if not request.user.is_staff:
+            return Response({"detail": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+
+        apunte = self.get_object()
+        serializer = self.get_serializer(apunte, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=["delete"], url_path="delete")
+    def delete_apunte(self, request, id=None):
+        apunte = self.get_object()
+
+        apunte.pdfdir.delete(save=False)
+        apunte.delete()
+        return Response(status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=["get"], url_path="download")
+    def download_apunte(self, request, id=None):
+        apunte = self.get_object()
+
+        pdf = apunte.pdfdir
+
+        file_handle = pdf.storage.open(pdf.name, "rb")
+
+        response = StreamingHttpResponse(file_handle, content_type="application/pdf")
+
+        response["Content-Disposition"] = (
+            f"attachment; " f'filename="{pdf.name.split("/")[-1]}"'
+        )
+        return response
+
+    @action(detail=True, methods=["get"], url_path="view")
+    def view_apunte(self, request, id=None):
+        apunte = self.get_object()
+
+        pdf = apunte.pdfdir
+
+        apunte = self.get_object()
+
+        pdf = apunte.pdfdir
+
+        file_handle = pdf.storage.open(pdf.name, "rb")
+
+        response = StreamingHttpResponse(file_handle, content_type="application/pdf")
+
+        response["Content-Disposition"] = (
+            f'inline; filename="{pdf.name.split("/")[-1]}"'
+        )
+        return response
+
+
+@extend_schema(
+    operation_id="List Apuntes",
+    description="Retrieve apuntes filtered by visible, user, fecha, etc.",
+    parameters=[
+        OpenApiParameter("titulo", str, description="Filter by title of the Apunte"),
+        OpenApiParameter("asignatura", int, description="Filter by asignatura ID"),
+        OpenApiParameter("user", int, description="Filter by userDA ID"),
+    ],
+)
+class ApunteListViewSet(ListModelMixin, GenericViewSet):
+    """
+    A viewset for listing Apunte instances.
+    This viewset provides a list of Apunte objects, allowing users to see available
+        study notes.
+    Attributes:
+        permission_classes (list): Permissions required to access this viewset.
+        serializer_class (Serializer): Serializer used for Apunte instances.
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    serializer_class = ListApunteSerializer
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["titulo", "asignatura", "user"]
+
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return Apunte.objects.order_by("-fecha_creacion")
+        else:
+            return Apunte.objects.filter(visible=True).order_by(
+                "-visualizaciones", "-fecha_creacion"
+            )

@@ -17,7 +17,7 @@ git clone https://github.com/Pdrj09/compartida.git
 cd compartida/
 ```
 
-Es importante generar un archivo .env en la raíz del proyecto:
+Es importante generar un archivo backend/.env en la raíz del proyecto:
 
 ```.env
 DJANGO_SECRET_KEY={Clave secreta de la app}
@@ -30,7 +30,11 @@ KC_HOST={Host de Keycloak}
 KC_ALGO={Algoritmo usado por Keycloak}
 CODIGO_DE_ESCUELA={Código de tu escuela, 61 en caso de la ETSISI}
 API_URL= {Url a la upm api para obtener las titulaciones y las asignaturas} 
-API_ANYO= (Año del que obtener la información de la api Pej: 202526)
+API_ANYO= {Año del que obtener la información de la api Pej: 202526}
+MINIO_ACCESS_KEY={Usuario del minio}
+MINIO_SECRET_KEY={Contraseña del usuario de minio}
+MINIO_BUCKET_NAME={Nombre del bucket}
+MINIO_ENDPOINT_URL={Url al minio}
 ```
 
 Aplica las migraciones de la base de datos.
@@ -47,5 +51,7 @@ python3 manage.py runserver
 ## Ayúdanos 
 
 Todas las colaboraciones son bienvenidas. Si quieres hacer una colaboración pequeña, haz un pull request. Si quieres hacer una modificación grande, por favor, pon una issue.
+
+Para ejecutar este proyecto en local es necesario tener un certificado SSL, para el manejo de cookies de sesión desde el backend, para ello recomendamos el uso de [mkcert](github.com/FiloSottile/mkcert)
 
 Por favor, respeta las reglas de Pylint a la hora de colaborar.
