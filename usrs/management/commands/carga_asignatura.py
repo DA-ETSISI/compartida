@@ -43,7 +43,7 @@ class Command(BaseCommand):
                 f"{config('API_URL')}/{config('API_ANYO')}/"
                 f"{titulo.codigo}_asignaturas_v2.json"
             )
-            resp = requests.get(asignaturas_url)
+            resp = requests.get(asignaturas_url, timeout=20)
 
             if resp.status_code == 200:
                 data_asignaturas = resp.json()
